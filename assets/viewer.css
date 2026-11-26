@@ -1,0 +1,77 @@
+/* Edge AI 101: the page around the slides.
+   Loaded before deck.css, which holds the look of the slides themselves. */
+
+* { margin: 0; }
+html, body { height: 100%; }
+html { background: #070D13; }
+body { font: 32px/1.2 sans-serif; overflow: hidden; }
+
+/* ---- Stage: one 1920 x 1080 canvas, scaled to fit the window by viewer.js ---- */
+.stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.deck > section {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  overflow: hidden; box-sizing: border-box; isolation: isolate;
+}
+/* A hidden slide is not rendered, so its entrance animations start again each time it is shown */
+.deck > section:not(.active) { display: none; }
+.deck > section.active { animation: deck-fade 0.28s ease-out; }
+@keyframes deck-fade { from { opacity: 0; } }
+
+/* ---- Element defaults the slides were laid out against ---- */
+h1 { font-size: 96px; font-weight: 600; }
+h2 { font-size: 64px; font-weight: 600; }
+h3 { font-size: 44px; font-weight: 600; }
+p, li, h1, h2, h3, td, th { overflow-wrap: break-word; text-wrap: pretty; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; border: solid rgba(0, 0, 0, 0.2); border-width: 2px 0 0 2px; }
+th, td { padding: 0.35em 0.6em; text-align: left; border: solid rgba(0, 0, 0, 0.2); border-width: 0 2px 2px 0; }
+aside { display: none; }
+
+/* ---- The deck's own elements; viewer.js draws the lines and glyphs inside them ---- */
+x-connector, x-icon, x-shape { display: block; }
+/* A connector with x1 y1 x2 y2 is measured from its positioned parent; one without is a flow arrow */
+x-connector { position: relative; }
+x-connector[x1] { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+x-connector > svg { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; pointer-events: none; }
+x-icon > svg {
+  display: block; width: 70%; height: 70%; margin: 15%;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+x-shape[kind="ellipse"] { border-radius: 50%; }
+x-shape[kind="rounded"] { border-radius: 12px; }
+x-shape[kind="diamond"] { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+x-shape[kind="arrow-right"] { clip-path: polygon(0 25%, 60% 25%, 60% 0, 100% 50%, 60% 100%, 60% 75%, 0 75%); }
+x-shape[kind="arrow-left"] { clip-path: polygon(100% 25%, 40% 25%, 40% 0, 0 50%, 40% 100%, 40% 75%, 100% 75%); }
+x-shape[kind="arrow-down"] { clip-path: polygon(25% 0, 75% 0, 75% 60%, 100% 60%, 50% 100%, 0 60%, 25% 60%); }
+x-shape[kind="arrow-up"] { clip-path: polygon(25% 100%, 75% 100%, 75% 40%, 100% 40%, 50% 0, 0 40%, 25% 40%); }
+
+/* ---- Toolbar ---- */
+.toolbar {
+  position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 4px; padding: 5px 8px;
+  font: 500 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; color: #F6F4EE;
+  white-space: nowrap;
+  background: rgba(14, 26, 36, 0.94); border: 1px solid #3A4A58; border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.3s ease;
+}
+body.idle .toolbar:not(:hover):not(:focus-within) { opacity: 0; }
+.toolbar button, .toolbar a, .toolbar select {
+  font: inherit; color: inherit; background: none; border: 0; border-radius: 999px;
+  height: 40px; min-width: 40px; padding: 0 10px; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.toolbar button:hover:not(:disabled), .toolbar a:hover, .toolbar select:hover { background: #24394A; }
+.toolbar button:disabled { opacity: 0.35; cursor: default; }
+.toolbar button:focus-visible, .toolbar a:focus-visible, .toolbar select:focus-visible { outline: 2px solid #7DB7F2; outline-offset: 1px; }
+.toolbar svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.toolbar__count { min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; color: #AEBBC6; }
+.toolbar select { appearance: none; -webkit-appearance: none; padding: 0 14px; max-width: 46vw; }
+.toolbar select option { color: #0E1A24; background: #F6F4EE; }
+.toolbar__sep { width: 1px; height: 22px; background: #3A4A58; margin: 0 4px; }
+
+.noscript { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: #F6F4EE; font: 18px/1.5 system-ui, sans-serif; }
+
+@media (max-width: 560px) {
+  .toolbar { gap: 0; padding: 4px; }
+  .toolbar__sep, .toolbar .toolbar__home, .toolbar #replay { display: none; }
+}

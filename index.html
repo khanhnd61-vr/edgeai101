@@ -1,0 +1,1947 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge AI &amp; Model Optimization 101</title>
+  <meta name="description" content="A 75-slide self-study course on running neural networks on edge devices: quantization, distillation, pruning, architecture search, kernels and runtimes, applied to LLMs, VLMs and VLAs.">
+  <meta property="og:title" content="Edge AI &amp; Model Optimization 101">
+  <meta property="og:description" content="A 75-slide self-study course on running neural networks on edge devices: quantization, distillation, pruning, architecture search, kernels and runtimes, applied to LLMs, VLMs and VLAs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://khanhnd61-vr.github.io/edgeai101/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230E1A24'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%232F6FB7'/%3E%3Crect x='17' y='7' width='8' height='8' rx='2' fill='%233A4A58'/%3E%3Crect x='7' y='17' width='8' height='8' rx='2' fill='%233A4A58'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%23E0672B'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/viewer.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body>
+  <noscript><p class="noscript">This slide deck needs JavaScript to page through its slides.</p></noscript>
+
+  <main class="stage" aria-label="Slides">
+    <div class="deck">
+<!-- 1 · cover -->
+<section id="cover" data-page="1" class="dk" data-transition="fade">
+<svg class="ab ap" style="left:1200px; top:230px; --i:2" width="592" height="592" viewBox="0 0 592 592" aria-label="A chip holding a small grid of weights, a few of them pulsing">
+<path d="M96 152H48M96 224H48M96 296H48M96 368H48M96 440H48M496 152h48M496 224h48M496 296h48M496 368h48M496 440h48M152 96V48M224 96V48M296 96V48M368 96V48M440 96V48M152 496v48M224 496v48M296 496v48M368 496v48M440 496v48" stroke="#8FA3B3" stroke-width="6" stroke-linecap="round" fill="none"/>
+<rect x="96" y="96" width="400" height="400" rx="28" fill="#132534" stroke="#F6F4EE" stroke-width="4"/>
+<rect x="124" y="124" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="196" y="124" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="268" y="124" width="56" height="56" rx="6" fill="#E0672B"><animate attributeName="opacity" values="1;0.3;1" dur="3.2s" begin="0s" repeatCount="indefinite"/></rect>
+<rect x="340" y="124" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="412" y="124" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="124" y="196" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="196" y="196" width="56" height="56" rx="6" fill="#2F6FB7"><animate attributeName="opacity" values="1;0.35;1" dur="4.1s" begin="0s" repeatCount="indefinite"/></rect>
+<rect x="268" y="196" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="340" y="196" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="412" y="196" width="56" height="56" rx="6" fill="#E0672B"/>
+<rect x="124" y="268" width="56" height="56" rx="6" fill="#E0672B"/>
+<rect x="196" y="268" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="268" y="268" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="340" y="268" width="56" height="56" rx="6" fill="#2F6FB7"><animate attributeName="opacity" values="1;0.3;1" dur="3.6s" begin="0s" repeatCount="indefinite"/></rect>
+<rect x="412" y="268" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="124" y="340" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="196" y="340" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="268" y="340" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="340" y="340" width="56" height="56" rx="6" fill="#E0672B"/>
+<rect x="412" y="340" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="124" y="412" width="56" height="56" rx="6" fill="#2F6FB7"/>
+<rect x="196" y="412" width="56" height="56" rx="6" fill="#E0672B"><animate attributeName="opacity" values="1;0.35;1" dur="4.6s" begin="0s" repeatCount="indefinite"/></rect>
+<rect x="268" y="412" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="340" y="412" width="56" height="56" rx="6" fill="#24394A"/>
+<rect x="412" y="412" width="56" height="56" rx="6" fill="#2F6FB7"/>
+</svg>
+<p class="eb af">A from-scratch course</p>
+<div class="sp"></div>
+<h1 class="ar-in" style="width:1040px; --i:1">Edge AI &amp;<br>Model Optimization</h1>
+<p class="tl ar-in" style="width:960px; margin-top:36px; color:#AEBBC6; --i:2">How a model built for a data center is made to run on a phone, a robot or a microcontroller.</p>
+<div class="sp"></div>
+<p class="sm af" style="width:1560px; --i:4">Quantization · Distillation · Pruning · Architecture search · Kernels and runtimes · LLM, VLM and VLA on device</p>
+</section>
+<!-- 2 · roadmap -->
+<section id="roadmap" data-page="2" class="s" data-transition="fade">
+<h2>Course map</h2>
+<p class="lede">Parts 2–5 change the model itself. Part 6 changes how it is executed. Part 7 puts them together.</p>
+<div class="bd">
+<div class="cards g4 f1">
+<div class="card ar-in" style="--i:0"><p class="num2 or">01</p><h3>Background</h3><p class="sm">What “edge” means, what limits a device, and which numbers we try to improve.</p></div>
+<div class="card ar-in" style="--i:1"><p class="num2 or">02</p><h3>Quantization</h3><p class="sm">Store and compute with 8, 4 or even fewer bits per number instead of 32.</p></div>
+<div class="card ar-in" style="--i:2"><p class="num2 or">03</p><h3>Distillation</h3><p class="sm">Train a small student model to imitate a large teacher.</p></div>
+<div class="card ar-in" style="--i:3"><p class="num2 or">04</p><h3>Pruning</h3><p class="sm">Remove the weights, layers and tokens that contribute least.</p></div>
+<div class="card ar-in" style="--i:4"><p class="num2 or">05</p><h3>Architectures</h3><p class="sm">Design or search for networks that are efficient from the start.</p></div>
+<div class="card ar-in" style="--i:5"><p class="num2 or">06</p><h3>Kernels</h3><p class="sm">Compile the model into fast code for one specific chip.</p></div>
+<div class="card ar-in" style="--i:6"><p class="num2 or">07</p><h3>LLM · VLM · VLA</h3><p class="sm">Combine the techniques for language, vision-language and robot models.</p></div>
+<div class="card card-k ar-in" style="--i:7"><p class="num2" style="color:#FF9A62">Tip</p><h3>How to read</h3><p class="sm">Press R to replay the animations. Dark boxes hold the few formulas worth remembering.</p></div>
+</div>
+</div>
+<p class="ft">Introduction</p>
+</section>
+<!-- 3 · edge-title -->
+<section id="edge-title" data-page="3" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">01</p>
+<h1 class="ar-in" style="--i:1">Edge AI: the problem</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">What changes when the model leaves the data center, and what exactly we are trying to improve.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">What counts as an edge device?</p>
+<p class="q af" style="--i:5">Why not just call a cloud API?</p>
+<p class="q af" style="--i:6">What limits speed on a small device?</p>
+<p class="q af" style="--i:7">Which layers of the stack can we optimize?</p>
+</div>
+</div>
+</section>
+<!-- 4 · edge-spectrum -->
+<section id="edge-spectrum" data-page="4" class="s" data-transition="fade">
+<h2>The device spectrum</h2>
+<p class="lede">“Edge” means the computer where the data is produced and the result is used. It covers five orders of magnitude in power.</p>
+<div class="bd col" style="gap:20px">
+<div class="host af" style="width:1664px; height:72px">
+<svg class="ab" style="left:0; top:0" width="1664" height="72" viewBox="0 0 1664 72" aria-label="A wedge that narrows from left to right: the resource budget shrinks from cloud to microcontroller"><path d="M0 0 L1664 26 L1664 46 L0 72 Z" fill="#2F6FB7"/></svg>
+<p class="ab lbk" style="left:24px; top:21px; width:700px; color:#FFFDF8">Memory, compute and power budget shrink →</p>
+</div>
+<div class="cards g5 f1">
+<div class="card card-g ar-in" style="--i:1; padding:26px 24px"><p class="tag">Cloud</p><p class="k">Server rack</p><p class="sm mu">Memory</p><p class="sm k">100s of GB of GPU memory</p><p class="sm mu">Power</p><p class="sm k">kilowatts</p><p class="sm mu">Runs</p><p class="sm k">70B+ LLMs for many users</p></div>
+<div class="card ar-in" style="--i:2; padding:26px 24px"><p class="tag tag-o">Edge</p><p class="k">Workstation GPU</p><p class="sm mu">Memory</p><p class="sm k">24–48 GB GPU memory</p><p class="sm mu">Power</p><p class="sm k">300–500 W</p><p class="sm mu">Runs</p><p class="sm k">7–30B models</p></div>
+<div class="card ar-in" style="--i:3; padding:26px 24px"><p class="tag tag-o">Edge</p><p class="k">Embedded module</p><p class="sm mu">Memory</p><p class="sm k">8–64 GB, shared</p><p class="sm mu">Power</p><p class="sm k">7–60 W</p><p class="sm mu">Runs</p><p class="sm k">1–8B LLM, VLM or VLA on a robot</p></div>
+<div class="card ar-in" style="--i:4; padding:26px 24px"><p class="tag tag-o">Edge</p><p class="k">Phone, laptop</p><p class="sm mu">Memory</p><p class="sm k">8–16 GB, shared with the OS</p><p class="sm mu">Power</p><p class="sm k">a few watts sustained</p><p class="sm mu">Runs</p><p class="sm k">1–4B LLM or VLM</p></div>
+<div class="card ar-in" style="--i:5; padding:26px 24px"><p class="tag tag-o">Edge</p><p class="k">Microcontroller</p><p class="sm mu">Memory</p><p class="sm k">tens of KB to ~1 MB</p><p class="sm mu">Power</p><p class="sm k">milliwatts</p><p class="sm mu">Runs</p><p class="sm k">keyword spotting, tiny vision</p></div>
+</div>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 5 · edge-why -->
+<section id="edge-why" data-page="5" class="s" data-transition="fade">
+<h2>Reasons to run on the device</h2>
+<p class="lede">A cloud call adds a network round trip to every inference. Running locally removes it, and with it four problems.</p>
+<div class="bd">
+<!-- A 0,56,220,67  B 500,56,240,67  C 0,330,300,98 -->
+<div class="host af" style="width:740px; height:520px">
+<svg class="ab" style="left:0; top:0" width="740" height="520" viewBox="0 0 740 520" aria-label="A request travels from the device to a cloud GPU and back; on the device it stays in a short local loop">
+<path d="M220 90 H500" stroke="#0E1A24" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+<circle cx="220" cy="90" r="11" fill="#E0672B"><animateMotion dur="3.6s" begin="0s" repeatCount="indefinite" path="M0 0 H280 H0"/></circle>
+<circle cx="440" cy="379" r="46" stroke="#0E1A24" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+<circle cx="440" cy="333" r="11" fill="#2F6FB7"><animateMotion dur="1s" begin="0s" repeatCount="indefinite" path="M0 0 A46 46 0 1 1 0 92 A46 46 0 1 1 0 0"/></circle>
+</svg>
+<p class="ab lbk" style="left:0; top:0; width:400px">Cloud inference</p>
+<p class="ab n" style="left:0; top:56px; width:220px">Device</p>
+<p class="ab n n-k" style="left:500px; top:56px; width:240px">Cloud GPU</p>
+<p class="ab lb" style="left:0; top:144px; width:740px">Every request crosses the network twice: tens to hundreds of milliseconds, and it varies.</p>
+<p class="ab lbk" style="left:0; top:274px; width:400px">On-device inference</p>
+<p class="ab n n-bt" style="left:0; top:330px; width:360px">Device<br>with the model inside</p>
+<p class="ab lb" style="left:0; top:452px; width:740px">The only delay is compute. It works offline and the data never leaves.</p>
+</div>
+<div class="cards g2 f1" style="gap:24px">
+<div class="card ar-in" style="--i:1"><h3>Latency</h3><p class="sm">A robot control loop at 10–50 Hz leaves 20–100 ms per action. A network round trip alone can use all of it.</p></div>
+<div class="card ar-in" style="--i:2"><h3>Privacy</h3><p class="sm">Camera frames, voice and personal text stay on the device instead of being uploaded.</p></div>
+<div class="card ar-in" style="--i:3"><h3>Availability</h3><p class="sm">A drone, a car or a factory robot must keep working when the connection drops.</p></div>
+<div class="card ar-in" style="--i:4"><h3>Cost</h3><p class="sm">No per-request server bill. The user’s own hardware does the work, paid for once.</p></div>
+</div>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 6 · edge-gap -->
+<section id="edge-gap" data-page="6" class="s" data-transition="fade">
+<h2>The gap between models and devices</h2>
+<p class="lede">Weights alone need parameters × bits ÷ 8 bytes. The chart shows one 7-billion-parameter model stored at four precisions, against the memory of three devices.</p>
+<div class="bd">
+<div class="host" style="width:1000px; height:520px">
+<div class="trk" style="position:absolute; left:0; top:20px; width:640px; height:420px; padding:0 24px; box-sizing:border-box">
+<div class="col f1" style="gap:8px"><p class="lbk ctr">28 GB</p><div class="bar bar-k gy" style="height:420px; flex:none; --i:0"></div></div>
+<div class="col f1" style="gap:8px"><p class="lbk ctr">14 GB</p><div class="bar bar-k gy" style="height:210px; flex:none; --i:1"></div></div>
+<div class="col f1" style="gap:8px"><p class="lbk ctr">7 GB</p><div class="bar gy" style="height:105px; flex:none; --i:2"></div></div>
+<div class="col f1" style="gap:8px"><p class="lbk ctr">~4 GB</p><div class="bar bar-o gy" style="height:61px; flex:none; --i:3"></div></div>
+</div>
+<div class="ab row" style="left:0; top:452px; width:640px; gap:28px; padding:0 24px; box-sizing:border-box">
+<p class="lb ctr f1">FP32</p><p class="lb ctr f1">FP16</p><p class="lb ctr f1">INT8</p><p class="lb ctr f1">4-bit</p>
+</div>
+<div class="ab dash af" style="left:0; top:80px; width:660px; --i:6"></div>
+<p class="ab lbk or af" style="left:676px; top:65px; width:324px; --i:6">24 GB · desktop GPU</p>
+<div class="ab dash af" style="left:0; top:260px; width:660px; --i:7"></div>
+<p class="ab lbk or af" style="left:676px; top:245px; width:324px; --i:7">12 GB · phone, total RAM</p>
+<div class="ab dash af" style="left:0; top:320px; width:660px; --i:8"></div>
+<p class="ab lbk or af" style="left:676px; top:305px; width:324px; --i:8">8 GB · Jetson Orin Nano</p>
+</div>
+<div class="col f1" style="gap:20px">
+<p class="fxl">memory = parameters × bits ÷ 8</p>
+<p class="fxl">7 × 10⁹ × 16 ÷ 8 = 14 GB</p>
+<p class="t">Weights are not the whole bill. The runtime also needs working memory for activations and caches, and the operating system and other apps keep their share.</p>
+<p class="t">Fewer bits per weight is the largest single lever, which is why quantization comes first.</p>
+<div class="sp"></div>
+<p class="take" style="margin-top:0">Memory is the first constraint: a model that does not fit does not run.</p>
+</div>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 7 · edge-metrics -->
+<section id="edge-metrics" data-page="7" class="s" data-transition="fade">
+<h2>What we optimize</h2>
+<p class="lede">Six numbers describe a deployed model. Every technique in this course trades some of them against the others.</p>
+<div class="bd col" style="gap:0">
+<div class="cards f1" style="gap:24px">
+<div class="card ar-in" style="--i:0"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Clock"></x-icon></div><h3>Latency</h3></div><p class="sm">Time for one inference, in ms. For an LLM: time to first token (TTFT), then time per generated token.</p></div>
+<div class="card ar-in" style="--i:1"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Activity"></x-icon></div><h3>Throughput</h3></div><p class="sm">Work per second: tokens/s for an LLM, frames/s for vision, actions/s (Hz) for a robot policy.</p></div>
+<div class="card ar-in" style="--i:2"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Database"></x-icon></div><h3>Peak memory</h3></div><p class="sm">The most RAM needed while running: weights, activations and caches. Exceed it and the OS kills the app.</p></div>
+<div class="card ar-in" style="--i:3"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Lightning"></x-icon></div><h3>Energy</h3></div><p class="sm">Joules per inference. It sets battery life and heat, and heat triggers thermal throttling that lowers speed.</p></div>
+<div class="card ar-in" style="--i:4"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Cloud"></x-icon></div><h3>Size on disk</h3></div><p class="sm">Bytes to download and store. It matters for app stores, over-the-air updates and microcontroller flash.</p></div>
+<div class="card ar-in" style="--i:5"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Chart"></x-icon></div><h3>Quality</h3></div><p class="sm">Task performance after optimization: answer quality for an LLM, task success rate for a robot.</p></div>
+</div>
+<p class="take">Parameter count and FLOPs are only proxies. The numbers that count are measured on the target device.</p>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 8 · edge-bottleneck -->
+<section id="edge-bottleneck" data-page="8" class="s" data-transition="fade">
+<h2>Where the time goes when an LLM generates</h2>
+<p class="lede">Generation has two phases with different bottlenecks. Knowing which one limits you tells you which optimization will help.</p>
+<div class="bd col" style="gap:24px">
+<div class="cards g2 f1">
+<div class="card">
+<p class="tag tag-b">Phase 1 · Prefill</p>
+<h3>Read the whole prompt at once</h3>
+<div class="row" style="gap:8px"><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div></div>
+<p class="t">All prompt tokens pass through the network in one batch. That is a lot of arithmetic at once, so the limit is <b>compute</b>. Prefill sets the time to first token.</p>
+</div>
+<div class="card">
+<p class="tag tag-o">Phase 2 · Decode</p>
+<h3>Write the answer one token at a time</h3>
+<div class="row" style="gap:8px"><div class="sq sq-o ap" style="--i:2"></div><div class="sq sq-o ap" style="--i:5"></div><div class="sq sq-o ap" style="--i:8"></div><div class="sq sq-o ap" style="--i:11"></div><div class="sq sq-o ap" style="--i:14"></div><div class="sq sq-o ap" style="--i:17"></div><div class="sq sq-e"></div><div class="sq sq-e"></div><div class="sq sq-e"></div><div class="sq sq-e"></div></div>
+<p class="t">Each new token is one full pass, and each pass reads every weight once. The limit is how fast memory can deliver the weights: <b>memory bandwidth</b>.</p>
+</div>
+</div>
+<div class="row ac" style="gap:32px">
+<p class="fx" style="width:900px; box-sizing:border-box">tokens/s <span class="ho">≲</span> memory bandwidth ÷ model size<br><span class="hg">50 GB/s ÷ 4 GB ≈ 12 tokens/s at best</span></p>
+<p class="t f1">A rule of thumb for decode, not a law. It explains why a 4-bit model is faster than a 16-bit one, not just smaller: there are fewer bytes to move per token.</p>
+</div>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 9 · edge-hardware -->
+<section id="edge-hardware" data-page="9" class="s" data-transition="fade">
+<h2>The processors inside an edge device</h2>
+<p class="lede">A system-on-chip: several kinds of processor around one shared pool of memory.</p>
+<div class="bd">
+<!-- frame 0,0,760,410  CPU 24,76,220,140  GPU 270,76,220,140  NPU 516,76,220,140  RAM 24,262,712,120 -->
+<div class="host" style="width:760px; height:560px">
+<div class="ab" style="left:0; top:0; width:760px; height:410px; box-sizing:border-box; border:2px solid #0E1A24; border-radius:14px; background:#FFFDF8"></div>
+<p class="ab lbk" style="left:24px; top:22px; width:400px">System-on-chip</p>
+<div class="ab n n-bt col jc ap" style="left:24px; top:76px; width:220px; height:140px; gap:4px; --i:1"><p class="tl k">CPU</p><p class="sm">a few fast cores</p></div>
+<div class="ab n n-b col jc ap" style="left:270px; top:76px; width:220px; height:140px; gap:4px; --i:2"><p class="tl k" style="color:#FFFDF8">GPU</p><p class="sm" style="color:#FFFDF8">parallel floats</p></div>
+<div class="ab n n-o col jc ap" style="left:516px; top:76px; width:220px; height:140px; gap:4px; --i:3"><p class="tl k">NPU</p><p class="sm" style="color:#0E1A24">integer math</p></div>
+<div class="ab n n-g col jc ap" style="left:24px; top:262px; width:712px; height:120px; gap:4px; --i:4"><p class="tl k">Unified memory</p><p class="sm">one pool of RAM for all three, and for the OS</p></div>
+<x-connector class="cn" x1="134" y1="216" x2="134" y2="262" head="both"></x-connector>
+<x-connector class="cn" x1="380" y1="216" x2="380" y2="262" head="both"></x-connector>
+<x-connector class="cn" x1="626" y1="216" x2="626" y2="262" head="both"></x-connector>
+<p class="ab lb" style="left:0; top:438px; width:760px">A microcontroller is the extreme case: one small CPU core, no operating system, kilobytes of RAM.</p>
+</div>
+<div class="col f1" style="gap:14px">
+<div class="card card-b" style="padding:16px 28px; gap:6px"><h3>CPU</h3><p class="sm">Runs any operator and is always available, using SIMD instructions (NEON on Arm). The fallback when the others cannot run something.</p></div>
+<div class="card" style="padding:16px 28px; gap:6px"><h3>GPU</h3><p class="sm">Thousands of float operations in parallel, usually FP16. Programmed through CUDA, Metal, Vulkan or OpenCL.</p></div>
+<div class="card card-o" style="padding:16px 28px; gap:6px"><h3>NPU</h3><p class="sm">A fixed-function accelerator with the best performance per watt. Limited operators; usually wants INT8 and static shapes.</p></div>
+<p class="sm">Shared memory: no copies between processors, but no separate VRAM either. The model competes with everything else.</p>
+</div>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 10 · edge-stack -->
+<section id="edge-stack" data-page="10" class="s" data-transition="fade">
+<h2>The optimization stack</h2>
+<p class="lede">The upper layers change the model. The lower layers only change how it runs.</p>
+<div class="bd col" style="gap:20px">
+<div class="row" style="gap:32px">
+<div class="col jc" style="width:300px; gap:8px"><p class="lbk bl">Model level</p><p class="sm">Outputs can change, so quality must be measured again.</p></div>
+<div class="col f1" style="gap:10px">
+<div class="card card-b ar-in" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:0"><p class="k" style="width:430px">Architecture</p><p class="sm f1">Choose or search for a smaller network.</p><p class="tag tag-k">Part 5</p></div>
+<div class="card card-b ar-in" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:1"><p class="k" style="width:430px">Training-time compression</p><p class="sm f1">Distillation, QAT, pruning with fine-tuning.</p><p class="tag tag-k">Parts 2–4</p></div>
+<div class="card card-b ar-in" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:2"><p class="k" style="width:430px">Post-training compression</p><p class="sm f1">Quantize or prune a finished model, no retraining.</p><p class="tag tag-k">Parts 2, 4</p></div>
+</div>
+</div>
+<div class="row" style="gap:32px">
+<div class="col jc" style="width:300px; gap:8px"><p class="lbk or">Execution level</p><p class="sm">Same outputs, computed faster or in less memory.</p></div>
+<div class="col f1" style="gap:10px">
+<div class="card card-o ar-in" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:3"><p class="k" style="width:430px">Graph compiler</p><p class="sm f1">Fuse operators, fold constants, plan memory.</p><p class="tag tag-k">Part 6</p></div>
+<div class="card card-o ar-in" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:4"><p class="k" style="width:430px">Kernels and runtime</p><p class="sm f1">SIMD, cache-aware loops, GPU and NPU back ends.</p><p class="tag tag-k">Part 6</p></div>
+</div>
+</div>
+<div class="row" style="gap:32px">
+<div class="col jc" style="width:300px"><p class="lbk">Fixed</p></div>
+<div class="card card-k ar-in f1" style="flex-direction:row; align-items:center; gap:24px; padding:14px 28px; --i:5"><h3 style="width:430px; font-size:28px">Hardware</h3><p class="sm f1">CPU, GPU, NPU and the memory they share.</p></div>
+</div>
+<div class="sp"></div>
+<p class="take" style="margin-top:0">The layers multiply: a 4× smaller model on a 3× faster kernel is 12× better.</p>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 11 · edge-pareto -->
+<section id="edge-pareto" data-page="11" class="s" data-transition="fade">
+<h2>The quality–cost trade-off</h2>
+<p class="lede">Plot every candidate by what it costs and how well it works, then look for the best point that fits.</p>
+<div class="bd col" style="gap:0">
+<div class="row f1" style="gap:48px">
+<div class="host af" style="width:900px; height:530px">
+<svg class="ab" style="left:0; top:0" width="900" height="530" viewBox="0 0 900 530" aria-label="Quality against cost. A curved frontier rises quickly then flattens. A model moves left along the frontier when compressed; a dashed higher frontier shows a better method; a vertical line marks the device budget.">
+<path d="M80 20 V480 H880" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<path d="M480 40 V480" stroke="#B8481A" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+<path d="M90 364 C 120 304, 160 254, 210 226 C 260 198, 310 156, 370 134 C 440 108, 520 90, 590 79 C 650 70, 710 63, 770 59" stroke="#2F6FB7" stroke-width="4" stroke-dasharray="12 10" fill="none"/>
+<path d="M140 400 C 170 340, 210 290, 260 262 C 310 234, 360 192, 420 170 C 490 144, 570 126, 640 115 C 700 106, 760 99, 820 95" stroke="#0E1A24" stroke-width="5" fill="none" stroke-dasharray="900" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.4s" begin="0s"/></path>
+<circle cx="330" cy="350" r="10" fill="#C9C4B6"/><circle cx="400" cy="290" r="10" fill="#C9C4B6"/><circle cx="560" cy="250" r="10" fill="#C9C4B6"/><circle cx="640" cy="330" r="10" fill="#C9C4B6"/><circle cx="720" cy="210" r="10" fill="#C9C4B6"/><circle cx="250" cy="410" r="10" fill="#C9C4B6"/>
+<circle cx="820" cy="95" r="13" fill="#0E1A24"/>
+<circle cx="420" cy="170" r="15" fill="#E0672B"><animateMotion dur="2.6s" begin="0s" path="M400 -75 C 340 -71, 280 -64, 220 -55 C 150 -44, 70 -26, 0 0"/></circle>
+</svg>
+<p class="ab lbk" style="left:96px; top:16px; width:200px">quality ↑</p>
+<p class="ab lbk" style="left:480px; top:496px; width:410px; text-align:right">cost: latency, memory, energy →</p>
+<p class="ab lbk or" style="left:300px; top:496px; width:240px">device budget</p>
+<p class="ab lb" style="left:700px; top:116px; width:190px">original model</p>
+<p class="ab lbk or" style="left:496px; top:182px; width:220px">after compression</p>
+<p class="ab lbk bl" style="left:96px; top:108px; width:230px">a better method</p>
+</div>
+<div class="col f1" style="gap:20px">
+<div class="card" style="padding:22px 28px; gap:6px"><h3>The frontier</h3><p class="sm">The best quality available at each cost. Grey points below it are dominated.</p></div>
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Moving along it</h3><p class="sm">Compressing harder moves a model left: cheaper and a little worse, slowly at first, then quickly.</p></div>
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Pushing it outward</h3><p class="sm">A better method (dashed) gives more quality at the same cost. Most papers in this course do this.</p></div>
+</div>
+</div>
+<p class="take">Fix the device budget first, then look for the highest point that fits inside it.</p>
+</div>
+<p class="ft">Part 1 · Background</p>
+</section>
+<!-- 12 · q-title -->
+<section id="q-title" data-page="12" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">02</p>
+<h1 class="ar-in" style="--i:1">Quantization</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">Represent weights and activations with fewer bits. It is the most widely used technique on the edge, and the first one to reach for.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">How can 4 bits stand in for 32?</p>
+<p class="q af" style="--i:5">Where does the error come from, and how is it kept small?</p>
+<p class="q af" style="--i:6">Why do LLMs need their own methods, such as GPTQ and AWQ?</p>
+<p class="q af" style="--i:7">What does a name like Q4_K_M mean?</p>
+</div>
+</div>
+</section>
+<!-- 13 · q-formats -->
+<section id="q-formats" data-page="13" class="s" data-transition="fade">
+<h2>How numbers are stored</h2>
+<p class="lede">A weight is a bit pattern. Fewer bits means fewer distinct values the weight can take.</p>
+<div class="bd col" style="gap:30px">
+<div class="row ac" style="gap:24px">
+<p class="tl k" style="width:120px">FP32</p>
+<div class="row gx" style="width:864px; gap:4px; --i:0"><p class="n n-k n-s" style="width:23px; padding:12px 0">±</p><p class="n n-b n-s" style="width:212px">exponent · 8</p><p class="n n-bt n-s f1">fraction · 23</p></div>
+<p class="sm f1">4 bytes per weight. About 7 significant decimal digits. The training default.</p>
+</div>
+<div class="row ac" style="gap:24px">
+<p class="tl k" style="width:120px">FP16</p>
+<div class="row" style="width:864px"><div class="row gx" style="width:432px; gap:4px; --i:2"><p class="n n-k n-s" style="width:23px; padding:12px 0">±</p><p class="n n-b n-s" style="width:131px">exp · 5</p><p class="n n-bt n-s f1">fraction · 10</p></div></div>
+<p class="sm f1">2 bytes. About 3 digits. Usually lossless enough for inference; the GPU default.</p>
+</div>
+<div class="row ac" style="gap:24px">
+<p class="tl k" style="width:120px">INT8</p>
+<div class="row" style="width:864px"><div class="row gx" style="width:216px; --i:4"><p class="n n-o n-s f1">integer · 8</p></div></div>
+<p class="sm f1">1 byte. Only 256 values, evenly spaced. The classic edge format.</p>
+</div>
+<div class="row ac" style="gap:24px">
+<p class="tl k" style="width:120px">INT4</p>
+<div class="row" style="width:864px"><div class="row gx" style="width:108px; --i:6"><p class="n n-o n-s f1">4</p></div></div>
+<p class="sm f1">Half a byte. Only 16 values. The usual choice for LLM weights on device.</p>
+</div>
+<div class="sp"></div>
+<div class="cards g2">
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Floats space their values unevenly</h3><p class="sm">The exponent puts many values near zero and few far away, so one format covers 0.0001 and 10,000.</p></div>
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Integers are evenly spaced</h3><p class="sm">An integer only means something once you say what one step is worth. Choosing that step is the whole subject of this part.</p></div>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 14 · q-affine -->
+<section id="q-affine" data-page="14" class="s" data-transition="fade">
+<h2>The core idea: snap to a grid</h2>
+<p class="lede">Quantization lays an evenly spaced grid over the real numbers and moves every value to the nearest grid point.</p>
+<div class="bd col" style="gap:44px">
+<!-- axis y=120, x = 882 + r*1000, ticks every 100 from 82 (q=-8) to 1582 (q=7) -->
+<div class="host" style="width:1664px; height:250px">
+<svg class="ab" style="left:0; top:0" width="1664" height="250" viewBox="0 0 1664 250" aria-label="Ten real-valued weights on a number line slide sideways to the nearest of sixteen evenly spaced grid points; two different weights land on the same point">
+<path d="M52 120 H1612" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<path d="M82 96V144M182 96V144M282 96V144M382 96V144M482 96V144M582 96V144M682 96V144M782 96V144M882 96V144M982 96V144M1082 96V144M1182 96V144M1282 96V144M1382 96V144M1482 96V144M1582 96V144" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<g fill="none" stroke="#2F6FB7" stroke-width="3"><circle cx="152" cy="120" r="13"/><circle cx="362" cy="120" r="13"/><circle cx="572" cy="120" r="13"/><circle cx="622" cy="120" r="13"/><circle cx="802" cy="120" r="13"/><circle cx="912" cy="120" r="13"/><circle cx="1002" cy="120" r="13"/><circle cx="1122" cy="120" r="13"/><circle cx="1292" cy="120" r="13"/><circle cx="1542" cy="120" r="13"/></g>
+<g fill="#E0672B">
+<circle cx="182" cy="120" r="13"><animate attributeName="cx" values="152;152;152;182" dur="2.4s" begin="0s"/></circle>
+<circle cx="382" cy="120" r="13"><animate attributeName="cx" values="362;362;362;382" dur="2.4s" begin="0s"/></circle>
+<circle cx="582" cy="120" r="13"><animate attributeName="cx" values="572;572;572;582" dur="2.4s" begin="0s"/></circle>
+<circle cx="582" cy="120" r="13"><animate attributeName="cx" values="622;622;622;582" dur="2.4s" begin="0s"/></circle>
+<circle cx="782" cy="120" r="13"><animate attributeName="cx" values="802;802;802;782" dur="2.4s" begin="0s"/></circle>
+<circle cx="882" cy="120" r="13"><animate attributeName="cx" values="912;912;912;882" dur="2.4s" begin="0s"/></circle>
+<circle cx="982" cy="120" r="13"><animate attributeName="cx" values="1002;1002;1002;982" dur="2.4s" begin="0s"/></circle>
+<circle cx="1082" cy="120" r="13"><animate attributeName="cx" values="1122;1122;1122;1082" dur="2.4s" begin="0s"/></circle>
+<circle cx="1282" cy="120" r="13"><animate attributeName="cx" values="1292;1292;1292;1282" dur="2.4s" begin="0s"/></circle>
+<circle cx="1582" cy="120" r="13"><animate attributeName="cx" values="1542;1542;1542;1582" dur="2.4s" begin="0s"/></circle>
+</g>
+</svg>
+<p class="ab lbk" style="left:0; top:0; width:700px">Real values r <span class="mu">(what the weight was)</span></p>
+<p class="ab lb mono ctr" style="left:22px; top:48px; width:120px">−0.8</p>
+<p class="ab lb mono ctr" style="left:422px; top:48px; width:120px">−0.4</p>
+<p class="ab lb mono ctr" style="left:822px; top:48px; width:120px">0.0</p>
+<p class="ab lb mono ctr" style="left:1222px; top:48px; width:120px">0.4</p>
+<p class="ab lb mono ctr" style="left:1522px; top:48px; width:120px">0.7</p>
+<p class="ab lbk mono ctr or" style="left:22px; top:156px; width:120px">−8</p>
+<p class="ab lbk mono ctr or" style="left:422px; top:156px; width:120px">−4</p>
+<p class="ab lbk mono ctr or" style="left:822px; top:156px; width:120px">0</p>
+<p class="ab lbk mono ctr or" style="left:1222px; top:156px; width:120px">4</p>
+<p class="ab lbk mono ctr or" style="left:1522px; top:156px; width:120px">7</p>
+<p class="ab lbk or" style="left:0; top:210px; width:900px">Integer codes q <span class="mu">(what is stored: 4 bits give 16 levels, −8 … 7)</span></p>
+</div>
+<div class="row" style="gap:32px">
+<div class="col" style="width:940px; gap:16px">
+<p class="fx">q = clamp( round(r / <span class="ho">s</span>) + <span class="hb">z</span>, q_min, q_max )<br>r̂ = <span class="ho">s</span> · (q − <span class="hb">z</span>)</p>
+<p class="sm"><b class="or">s</b> is the scale: the real-valued width of one step. <b class="bl">z</b> is the zero-point: the integer code that stands for real 0. Here s = 0.1 and z = 0.</p>
+</div>
+<div class="card f1" style="padding:22px 28px; gap:8px"><h3>One weight, step by step</h3><p class="sm mono">r = −0.26<br>q = round(−0.26 / 0.1) = −3<br>r̂ = 0.1 × (−3) = −0.30</p><p class="sm">The error is 0.04. Note that −0.31 also became −3: two different weights are now identical.</p></div>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 15 · q-scale -->
+<section id="q-scale" data-page="15" class="s" data-transition="fade">
+<h2>Choosing the scale and zero-point</h2>
+<p class="lede">The grid should cover the range the values actually occupy. Two layouts are common, one for each typical shape of data.</p>
+<div class="bd col" style="gap:14px">
+<div class="cards g2 f1">
+<div class="card ar-in" style="--i:0">
+<p class="tag tag-b">Symmetric · used for weights</p>
+<svg width="736" height="170" viewBox="0 0 736 170" aria-label="A bell-shaped distribution centred on zero with grid ticks spread evenly on both sides"><path d="M32 140 C 190 140, 270 16, 368 16 S 546 140, 704 140 Z" fill="#DCE8F5" stroke="#2F6FB7" stroke-width="3"/><path d="M32 128V152M77 128V152M122 128V152M166 128V152M211 128V152M256 128V152M301 128V152M346 128V152M390 128V152M435 128V152M480 128V152M525 128V152M570 128V152M614 128V152M659 128V152M704 128V152" stroke="#0E1A24" stroke-width="3" fill="none"/><path d="M368 100V164" stroke="#B8481A" stroke-width="4" fill="none"/></svg>
+<p class="fxs">s = max|r| / (2^(b−1) − 1), z = 0</p>
+<p class="sm">Weights are roughly centred on zero, so the grid is centred too. With z = 0 a multiply needs no offset correction.</p>
+</div>
+<div class="card ar-in" style="--i:2">
+<p class="tag tag-o">Asymmetric · used for activations</p>
+<svg width="736" height="170" viewBox="0 0 736 170" aria-label="A one-sided distribution that starts at zero and has a long right tail, with grid ticks covering only that range"><path d="M32 140 L32 96 C 80 10, 170 10, 230 60 S 480 132, 704 138 L704 140 Z" fill="#FBE2D2" stroke="#E0672B" stroke-width="3"/><path d="M32 128V152M77 128V152M122 128V152M166 128V152M211 128V152M256 128V152M301 128V152M346 128V152M390 128V152M435 128V152M480 128V152M525 128V152M570 128V152M614 128V152M659 128V152M704 128V152" stroke="#0E1A24" stroke-width="3" fill="none"/><path d="M32 100V164" stroke="#B8481A" stroke-width="4" fill="none"/></svg>
+<p class="fxs">s = (r_max − r_min) / (q_max − q_min)<br>z = round(q_min − r_min / s)</p>
+<p class="sm">After ReLU or GELU the values are one-sided. A centred grid would waste half its levels, so the grid is shifted with z.</p>
+</div>
+</div>
+<p class="sm">Orange mark: real zero. It must sit exactly on a grid point, so that zeros (padding, ReLU outputs) stay exact.</p>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 16 · q-error -->
+<section id="q-error" data-page="16" class="s" data-transition="fade">
+<h2>Two kinds of error: rounding and clipping</h2>
+<p class="lede">Most values sit in a narrow bulk; a few outliers sit far away. The range you pick decides which error you pay.</p>
+<div class="bd col" style="gap:20px">
+<div class="cards g2 f1">
+<div class="card ar-in" style="--i:0">
+<p class="tag">Range = min to max</p>
+<svg width="736" height="180" viewBox="0 0 736 180" aria-label="A narrow bulk with far outliers. A grid that spans everything has only three ticks under the bulk."><path d="M32 150 C 110 150, 120 14, 160 14 S 210 150, 300 150 Z" fill="#DCE8F5" stroke="#2F6FB7" stroke-width="3"/><circle cx="600" cy="140" r="9" fill="#2F6FB7"/><circle cx="704" cy="140" r="9" fill="#2F6FB7"/><path d="M32 138V166M128 138V166M224 138V166M320 138V166M416 138V166M512 138V166M608 138V166M704 138V166" stroke="#0E1A24" stroke-width="3" fill="none"/><path d="M32 152H704" stroke="#0E1A24" stroke-width="3" fill="none"/></svg>
+<h3>Large rounding error</h3>
+<p class="sm">Nothing is clipped, but the step s is wide. Almost every level is spent on empty space, and the bulk is described by only a few of them.</p>
+</div>
+<div class="card ar-in" style="--i:2">
+<p class="tag tag-o">Range = clipped</p>
+<svg width="736" height="180" viewBox="0 0 736 180" aria-label="The same data. A narrow grid has many ticks under the bulk; the two outliers are pulled back to the last grid point."><path d="M32 150 C 110 150, 120 14, 160 14 S 210 150, 300 150 Z" fill="#FBE2D2" stroke="#E0672B" stroke-width="3"/><path d="M32 138V166M70 138V166M109 138V166M147 138V166M186 138V166M224 138V166M262 138V166M301 138V166" stroke="#0E1A24" stroke-width="3" fill="none"/><path d="M32 152H301" stroke="#0E1A24" stroke-width="3" fill="none"/><circle cx="600" cy="140" r="9" fill="none" stroke="#B8481A" stroke-width="3"/><circle cx="704" cy="140" r="9" fill="none" stroke="#B8481A" stroke-width="3"/><path d="M588 140 H322" stroke="#B8481A" stroke-width="3" stroke-dasharray="8 7" fill="none"/><path d="M322 140 l14 -8 v16 Z" fill="#B8481A"/><circle cx="301" cy="140" r="9" fill="#E0672B"><animate attributeName="cx" values="650;650;301" dur="2s" begin="0s"/></circle></svg>
+<h3>Small rounding error, some clipping error</h3>
+<p class="sm">The step is fine where the data is. Outliers saturate at the last level and lose their true value. Usually the better trade.</p>
+</div>
+</div>
+<div class="row ac" style="gap:32px">
+<p class="fxl" style="width:760px; box-sizing:border-box">rounding error ≤ s / 2 per value</p>
+<p class="sm f1"><b>Calibration</b> is the choice of range from sample data: min–max, a percentile such as 99.99%, or the range that minimizes mean squared error.</p>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 17 · q-granularity -->
+<section id="q-granularity" data-page="17" class="s" data-transition="fade">
+<h2>Granularity: how many scales</h2>
+<p class="lede">One scale for a whole weight matrix is rarely enough. Each coloured region below shares one scale s.</p>
+<div class="bd col" style="gap:0">
+<div class="cards f1">
+<div class="card ar-in" style="--i:0">
+<svg width="432" height="216" viewBox="0 0 432 216" aria-label="A matrix where all cells share one colour"><rect x="0" y="0" width="432" height="216" fill="#2F6FB7"/><path d="M36 0V216M72 0V216M108 0V216M144 0V216M180 0V216M216 0V216M252 0V216M288 0V216M324 0V216M360 0V216M396 0V216M0 36H432M0 72H432M0 108H432M0 144H432M0 180H432" stroke="#FFFDF8" stroke-width="2" fill="none"/></svg>
+<h3>Per tensor</h3>
+<p class="sm">One s for the whole matrix. Simplest and cheapest, but one large row forces a coarse grid on all the others.</p>
+</div>
+<div class="card ar-in" style="--i:1">
+<svg width="432" height="216" viewBox="0 0 432 216" aria-label="A matrix where every row has its own colour"><rect x="0" y="0" width="432" height="36" fill="#2F6FB7"/><rect x="0" y="36" width="432" height="36" fill="#E0672B"/><rect x="0" y="72" width="432" height="36" fill="#0E1A24"/><rect x="0" y="108" width="432" height="36" fill="#7DB7F2"/><rect x="0" y="144" width="432" height="36" fill="#B8481A"/><rect x="0" y="180" width="432" height="36" fill="#8A8F98"/><path d="M36 0V216M72 0V216M108 0V216M144 0V216M180 0V216M216 0V216M252 0V216M288 0V216M324 0V216M360 0V216M396 0V216M0 36H432M0 72H432M0 108H432M0 144H432M0 180H432" stroke="#FFFDF8" stroke-width="2" fill="none"/></svg>
+<h3>Per channel</h3>
+<p class="sm">One s per output row (one neuron or one convolution filter). The standard for INT8 CNNs: almost free and much more accurate.</p>
+</div>
+<div class="card ar-in" style="--i:2">
+<svg width="432" height="216" viewBox="0 0 432 216" aria-label="A matrix where each row is split into three blocks of four cells, each block with its own colour"><rect x="0" y="0" width="432" height="216" fill="#2F6FB7"/><path d="M144 0h144v36h-144ZM0 36h144v36h-144ZM288 36h144v36h-144ZM144 72h144v36h-144ZM0 108h144v36h-144ZM288 108h144v36h-144ZM144 144h144v36h-144ZM0 180h144v36h-144ZM288 180h144v36h-144Z" fill="#E0672B"/><path d="M36 0V216M72 0V216M108 0V216M144 0V216M180 0V216M216 0V216M252 0V216M288 0V216M324 0V216M360 0V216M396 0V216M0 36H432M0 72H432M0 108H432M0 144H432M0 180H432" stroke="#FFFDF8" stroke-width="2" fill="none"/></svg>
+<h3>Per group</h3>
+<p class="sm">One s for every small block of consecutive weights, for example 32. The standard for 4-bit LLM formats.</p>
+</div>
+</div>
+<p class="take">Finer granularity means less error and more metadata. A 4-bit code plus one 16-bit scale per 32 weights costs 4.5 bits per weight.</p>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 18 · q-what -->
+<section id="q-what" data-page="18" class="s" data-transition="fade">
+<h2>What gets quantized, and when</h2>
+<p class="lede">A layer computes y = W · x. The weights W are fixed and known in advance; the activations x and y change with every input.</p>
+<div class="bd col" style="gap:28px">
+<div class="row ac jc" style="gap:20px">
+<div class="col ac" style="gap:8px"><p class="n n-ot" style="width:300px">x · activations in</p><p class="sm">range depends on the input</p></div>
+<x-connector class="ar" style="margin-bottom:40px"></x-connector>
+<div class="col ac" style="gap:8px"><p class="n n-b" style="width:300px">W · weights</p><p class="sm">range known offline</p></div>
+<x-connector class="ar" style="margin-bottom:40px"></x-connector>
+<div class="col ac" style="gap:8px"><p class="n n-ot" style="width:300px">y · activations out</p><p class="sm">range depends on the input</p></div>
+</div>
+<table>
+<tr class="thd"><th style="width:17%">Mode</th><th style="width:13%">Notation</th><th style="width:24%">Activation range</th><th style="width:18%">Data needed</th><th>Where it is used</th></tr>
+<tr><td>Weight-only</td><td>W4A16</td><td>Not quantized. Weights are expanded back to floats as they are used</td><td>None, or a small calibration set</td><td>LLMs on CPU and GPU: GGUF, GPTQ, AWQ</td></tr>
+<tr><td>Dynamic</td><td>W8A8</td><td>Measured at run time, for each input</td><td>None</td><td>A quick CPU speed-up with no calibration step</td></tr>
+<tr><td>Static</td><td>W8A8</td><td>Fixed in advance from calibration samples</td><td>A few hundred typical inputs</td><td>NPUs and microcontrollers, where everything must be integer</td></tr>
+</table>
+<p class="sm">WxAy reads “x-bit weights, y-bit activations”. Weight-only shrinks memory and the bytes moved per token. Only full integer quantization lets an NPU or a microcontroller without floating point run the model.</p>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 19 · q-ptq-qat -->
+<section id="q-ptq-qat" data-page="19" class="s" data-transition="fade">
+<h2>Two workflows: PTQ and QAT</h2>
+<p class="lede">Quantize after training and accept the error, or let training see the error and adapt to it.</p>
+<div class="bd col" style="gap:20px">
+<div class="card" style="padding:20px 28px; gap:14px">
+<div class="row ac" style="gap:16px"><p class="tag tag-b">PTQ · post-training quantization</p><p class="sm">minutes to hours · no labels · no gradients</p></div>
+<div class="row ac" style="gap:14px">
+<p class="n f1 as" style="--i:0">Trained FP32 model</p><x-connector class="ar"></x-connector>
+<p class="n n-bt f1 as" style="--i:2">Run a few hundred calibration samples</p><x-connector class="ar"></x-connector>
+<p class="n n-bt f1 as" style="--i:4">Pick ranges, round the weights</p><x-connector class="ar"></x-connector>
+<p class="n n-b f1 as" style="--i:6">Quantized model</p>
+</div>
+</div>
+<div class="card" style="padding:20px 28px; gap:14px">
+<div class="row ac" style="gap:16px"><p class="tag tag-o">QAT · quantization-aware training</p><p class="sm">hours to days of GPU time · needs the training data and pipeline</p></div>
+<div class="row ac" style="gap:14px">
+<p class="n f1 as" style="--i:8">Trained FP32 model</p><x-connector class="ar"></x-connector>
+<p class="n n-ot f1 as" style="--i:10">Insert fake-quantize operations</p><x-connector class="ar"></x-connector>
+<p class="n n-ot f1 as" style="--i:12">Fine-tune: the loss now sees the rounding</p><x-connector class="ar"></x-connector>
+<p class="n n-o f1 as" style="--i:14">Quantized model</p>
+</div>
+</div>
+<div class="cards" style="gap:24px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>At 8 bits</h3><p class="sm">PTQ is usually within a fraction of a percent of the original. Start here.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>At 4 bits and below</h3><p class="sm">Plain rounding breaks down. Use QAT, or one of the smarter PTQ methods that follow.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>For LLMs</h3><p class="sm">Retraining billions of weights is expensive, so PTQ dominates. QAT is used when training from scratch.</p></div>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 20 · q-ste -->
+<section id="q-ste" data-page="20" class="s" data-transition="fade">
+<h2>QAT and the straight-through estimator</h2>
+<p class="lede">Rounding is a staircase: its gradient is zero almost everywhere, so backpropagation stops.</p>
+<div class="bd">
+<div class="host af" style="width:620px; height:500px">
+<svg class="ab" style="left:0; top:0" width="620" height="500" viewBox="0 0 620 500" aria-label="A staircase function, round of x, with a dashed diagonal line through its middle showing the slope the straight-through estimator pretends it has">
+<path d="M20 240H600M310 20V460" stroke="#C9C4B6" stroke-width="3" fill="none"/>
+<path d="M100 450 L520 30" stroke="#E0672B" stroke-width="4" stroke-dasharray="12 10" fill="none"/>
+<path d="M65 450 H135 V380 H205 V310 H275 V240 H345 V170 H415 V100 H485 V30 H555" stroke="#2F6FB7" stroke-width="5" fill="none" stroke-linejoin="round" stroke-dasharray="1000" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.6s" begin="0s"/></path>
+</svg>
+<p class="ab lbk bl" style="left:350px; top:380px; width:260px">forward: round(x), a staircase</p>
+<p class="ab lbk or" style="left:30px; top:60px; width:240px">backward: treated as slope 1</p>
+<p class="ab lb" style="left:540px; top:250px; width:70px">x</p>
+</div>
+<div class="col f1" style="gap:18px">
+<p class="fx">forward:  ŵ = s · round(w / s)<br>backward: <span class="ho">∂L/∂w ≈ ∂L/∂ŵ</span></p>
+<p class="t"><b>Forward pass.</b> The real quantizer runs, so the loss is computed with the weights the device will actually use.</p>
+<p class="t"><b>Backward pass.</b> The gradient is copied straight through the rounding step as if it were the identity. It is set to zero only outside the clipping range.</p>
+<p class="t"><b>What is trained.</b> A full-precision “latent” copy of each weight keeps receiving small updates. Over many steps it drifts until its rounded value is the one that lowers the loss.</p>
+<div class="sp"></div>
+<p class="sm mu">This node is called fake quantization. The estimator is usually credited to Bengio et al., 2013.</p>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 21 · q-llm -->
+<section id="q-llm" data-page="21" class="s" data-transition="fade">
+<h2>Why LLMs need their own methods</h2>
+<p class="lede">The classic INT8 recipe was built for CNNs. Three things break it for large transformers.</p>
+<div class="bd">
+<div class="col" style="width:700px; gap:12px">
+<div class="trk" style="height:380px; gap:8px">
+<div class="bar bar-g gy" style="height:34px; --i:0"></div><div class="bar bar-g gy" style="height:52px; --i:0"></div><div class="bar bar-g gy" style="height:28px; --i:0"></div><div class="bar bar-g gy" style="height:46px; --i:0"></div><div class="bar bar-o gy" style="height:372px; --i:5"></div><div class="bar bar-g gy" style="height:40px; --i:0"></div><div class="bar bar-g gy" style="height:22px; --i:0"></div><div class="bar bar-g gy" style="height:58px; --i:0"></div><div class="bar bar-g gy" style="height:36px; --i:0"></div><div class="bar bar-g gy" style="height:30px; --i:0"></div><div class="bar bar-g gy" style="height:48px; --i:0"></div><div class="bar bar-g gy" style="height:26px; --i:0"></div><div class="bar bar-g gy" style="height:42px; --i:0"></div><div class="bar bar-o gy" style="height:290px; --i:7"></div><div class="bar bar-g gy" style="height:38px; --i:0"></div><div class="bar bar-g gy" style="height:54px; --i:0"></div><div class="bar bar-g gy" style="height:24px; --i:0"></div><div class="bar bar-g gy" style="height:44px; --i:0"></div><div class="bar bar-g gy" style="height:32px; --i:0"></div><div class="bar bar-g gy" style="height:50px; --i:0"></div>
+</div>
+<p class="lbk">Activation magnitude per channel in one layer <span class="mu">(illustrative)</span></p>
+<p class="sm">A handful of channels are 10–100× larger than the rest. One scale for the whole tensor either clips them or crushes everything else to zero.</p>
+</div>
+<div class="col f1" style="gap:16px">
+<div class="card ar-in" style="padding:18px 28px; gap:6px; --i:1"><h3>1 · Too big to retrain</h3><p class="sm">Retraining billions of weights is out of reach. Methods must work post-training, layer by layer, from about a hundred calibration sequences.</p></div>
+<div class="card ar-in" style="padding:18px 28px; gap:6px; --i:3"><h3>2 · Activation outliers</h3><p class="sm">The spikes on the left make activations hard to quantize, so weight-only quantization is the default for LLMs.</p></div>
+<div class="card ar-in" style="padding:18px 28px; gap:6px; --i:5"><h3>3 · Weights are not equally important</h3><p class="sm">A weight that multiplies a large activation matters far more than one that multiplies a tiny one.</p></div>
+<p class="fxs">not  min ‖W − Ŵ‖²<br>but  <span class="ho">min ‖W·X − Ŵ·X‖²</span>  on calibration inputs X</p>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 22 · q-gptq -->
+<section id="q-gptq" data-page="22" class="s" data-transition="fade">
+<h2>GPTQ: round one column, repair the rest</h2>
+<p class="lede">Round one column of a layer, then adjust the columns not yet rounded so the layer’s output is unchanged.</p>
+<div class="bd">
+<div class="col" style="width:640px; gap:16px">
+<svg width="640" height="300" viewBox="0 0 640 300" aria-label="A weight matrix. An orange region of already-rounded columns grows from the left; a dark bar marks the column being rounded now; the remaining blue columns are still full precision."><rect x="0" y="0" width="640" height="300" fill="#DCE8F5"/><rect x="0" y="0" width="240" height="300" fill="#E0672B"><animate attributeName="width" from="0" to="240" dur="3.6s" begin="0s"/></rect><rect x="240" y="0" width="80" height="300" fill="#0E1A24"><animate attributeName="x" from="0" to="240" dur="3.6s" begin="0s"/></rect><path d="M80 0V300M160 0V300M240 0V300M320 0V300M400 0V300M480 0V300M560 0V300M0 50H640M0 100H640M0 150H640M0 200H640M0 250H640" stroke="#FFFDF8" stroke-width="3" fill="none"/></svg>
+<div class="lg"><div class="sq sq-o"></div><p>already rounded, now frozen</p></div>
+<div class="lg"><div class="sq sq-k"></div><p>the column being rounded</p></div>
+<div class="lg"><div class="sq" style="background:#DCE8F5; border:2px solid #2F6FB7; box-sizing:border-box"></div><p>still full precision: nudged to cancel the error</p></div>
+</div>
+<div class="col f1" style="gap:10px">
+<p class="fxs">goal, per layer:  <span class="ho">min ‖W·X − Ŵ·X‖²</span><br>H = 2·X·Xᵀ   <span class="hg">(from calibration inputs X)</span></p>
+<div class="card" style="padding:14px 26px; gap:4px"><h3>1 · Measure</h3><p class="sm">Run about a hundred sequences through the model and record each layer’s inputs X. H captures which inputs are large and how they are correlated.</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><h3>2 · Round a column</h3><p class="sm">Snap every weight in the column to the grid. This leaves a known error.</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><h3>3 · Compensate</h3><p class="sm">Spread the opposite of that error over the remaining columns, weighted by H⁻¹. If two inputs usually move together, a weight on one can make up for the other.</p></div>
+<p class="sm mu">Frantar et al., 2023. No gradients, no retraining, even at 175B parameters.</p>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 23 · q-awq -->
+<section id="q-awq" data-page="23" class="s" data-transition="fade">
+<h2>AWQ: protect the weights that matter</h2>
+<p class="lede">About 1% of weights feed on the largest activations and carry most of the quality. AWQ makes those weights bigger before rounding, so the same rounding step hurts them less.</p>
+<div class="bd col" style="gap:20px">
+<div class="row" style="gap:32px">
+<div class="card f1" style="padding:22px 28px; gap:14px">
+<p class="tag">Original layer</p>
+<div class="row ac" style="gap:14px"><p class="n n-ot" style="width:80px">x</p><x-connector class="ar"></x-connector><p class="n n-b f1">W</p><x-connector class="ar"></x-connector><p class="n" style="width:80px">y</p></div>
+</div>
+<div class="card card-o f1" style="padding:22px 28px; gap:14px">
+<p class="tag tag-k">Same output, easier to quantize</p>
+<div class="row ac" style="gap:14px"><p class="n n-ot" style="width:80px">x</p><x-connector class="ar"></x-connector><p class="n as" style="width:100px; --i:2">÷ s</p><x-connector class="ar"></x-connector><p class="n n-b f1 as" style="--i:4">round(W·s)</p><x-connector class="ar"></x-connector><p class="n" style="width:80px">y</p></div>
+</div>
+</div>
+<p class="fx ctr">W · x = (W · <span class="ho">s</span>) · (x ÷ <span class="ho">s</span>)      <span class="hg">s is one number per input channel</span></p>
+<div class="cards f1" style="gap:24px">
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Why scaling helps</h3><p class="sm">The grid step stays about the same, but the important weight is now s times larger. Its error, relative to its size, shrinks by about s.</p></div>
+<div class="card" style="padding:22px 28px; gap:6px"><h3>How s is chosen</h3><p class="sm mono">s_j = (mean |x_j|)^α</p><p class="sm">Channels with large activations get large s. A grid search over α between 0 and 1 picks the value with the smallest output error.</p></div>
+<div class="card" style="padding:22px 28px; gap:6px"><h3>Why it is popular</h3><p class="sm">No backpropagation and little calibration data. Every weight keeps the same bit width, so the file stays simple for hardware. Lin et al., 2024.</p></div>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 24 · q-smooth -->
+<section id="q-smooth" data-page="24" class="s" data-transition="fade">
+<h2>SmoothQuant: move the difficulty</h2>
+<p class="lede">To quantize activations as well (W8A8), the outlier channels must go. The same scaling trick shifts their size out of the activations and into the weights.</p>
+<div class="bd col" style="gap:20px">
+<div class="row ac" style="gap:24px">
+<div class="card f1" style="padding:20px 24px; gap:10px">
+<p class="tag">Before</p>
+<div class="row" style="gap:28px">
+<div class="col f1" style="gap:8px"><div class="trk" style="height:210px; gap:8px"><div class="bar bar-o" style="height:20px"></div><div class="bar bar-o" style="height:30px"></div><div class="bar bar-o" style="height:200px"></div><div class="bar bar-o" style="height:25px"></div><div class="bar bar-o" style="height:35px"></div><div class="bar bar-o" style="height:160px"></div><div class="bar bar-o" style="height:28px"></div><div class="bar bar-o" style="height:22px"></div></div><p class="lb ctr">activations: spiky, hard</p></div>
+<div class="col f1" style="gap:8px"><div class="trk" style="height:210px; gap:8px"><div class="bar" style="height:50px"></div><div class="bar" style="height:55px"></div><div class="bar" style="height:48px"></div><div class="bar" style="height:52px"></div><div class="bar" style="height:50px"></div><div class="bar" style="height:53px"></div><div class="bar" style="height:49px"></div><div class="bar" style="height:51px"></div></div><p class="lb ctr">weights: flat, easy</p></div>
+</div>
+</div>
+<x-shape kind="arrow-right" style="width:56px; height:32px; background:#0E1A24"></x-shape>
+<div class="card f1" style="padding:20px 24px; gap:10px">
+<p class="tag tag-b">After scaling each channel by s</p>
+<div class="row" style="gap:28px">
+<div class="col f1" style="gap:8px"><div class="trk" style="height:210px; gap:8px"><div class="bar bar-o gy" style="height:32px; --i:2"></div><div class="bar bar-o gy" style="height:41px; --i:2"></div><div class="bar bar-o gy" style="height:98px; --i:2"></div><div class="bar bar-o gy" style="height:36px; --i:2"></div><div class="bar bar-o gy" style="height:42px; --i:2"></div><div class="bar bar-o gy" style="height:92px; --i:2"></div><div class="bar bar-o gy" style="height:37px; --i:2"></div><div class="bar bar-o gy" style="height:34px; --i:2"></div></div><p class="lb ctr">activations ÷ s: manageable</p></div>
+<div class="col f1" style="gap:8px"><div class="trk" style="height:210px; gap:8px"><div class="bar gy" style="height:32px; --i:4"></div><div class="bar gy" style="height:41px; --i:4"></div><div class="bar gy" style="height:98px; --i:4"></div><div class="bar gy" style="height:36px; --i:4"></div><div class="bar gy" style="height:42px; --i:4"></div><div class="bar gy" style="height:92px; --i:4"></div><div class="bar gy" style="height:37px; --i:4"></div><div class="bar gy" style="height:34px; --i:4"></div></div><p class="lb ctr">weights × s: still manageable</p></div>
+</div>
+</div>
+</div>
+<div class="row ac" style="gap:32px">
+<p class="fx" style="width:860px; box-sizing:border-box">s_j = max|X_j|^<span class="ho">α</span> ÷ max|W_j|^(1−<span class="ho">α</span>)</p>
+<p class="sm f1">α sets how much difficulty moves across; 0.5 splits it evenly, as drawn. The scaling is folded into the previous layer, so it costs nothing at run time. Xiao et al., 2023.</p>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 25 · q-gguf -->
+<section id="q-gguf" data-page="25" class="s" data-transition="fade">
+<h2>Reading a GGUF quantization name</h2>
+<p class="lede">GGUF is the model file format of llama.cpp. The name of each variant says how many bits a weight gets, and how.</p>
+<div class="bd col" style="gap:22px">
+<div class="row" style="gap:20px">
+<div class="card card-k ap" style="width:250px; padding:20px 24px; gap:4px; --i:0"><p class="num2 mono" style="color:#FF9A62">Q4</p><p class="sm">about 4 bits for most weights</p></div>
+<div class="card card-k ap f1" style="padding:20px 24px; gap:4px; --i:2"><p class="num2 mono" style="color:#7DB7F2">_K</p><p class="sm">the “k-quant” scheme: small blocks of weights, each with its own scale</p></div>
+<div class="card card-k ap f1" style="padding:20px 24px; gap:4px; --i:4"><p class="num2 mono" style="color:#F6F4EE">_M</p><p class="sm">the mix: S, M or L. Larger mixes give sensitive tensors extra bits</p></div>
+</div>
+<div class="col" style="gap:10px">
+<div class="row ac" style="gap:20px"><p class="lbk" style="width:150px">Variant</p><p class="lbk" style="width:690px">File size, Llama-2-7B</p><p class="lbk" style="width:150px">Bits/weight</p><p class="lbk f1">What to expect</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">F16</p><div style="width:690px"><div class="hbar gx" style="width:675px; height:32px; background:#0E1A24; --i:1"></div></div><p class="lb mono" style="width:150px">16.0</p><p class="lb f1">13.5 GB (computed). The reference</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">Q8_0</p><div style="width:690px"><div class="hbar gx" style="width:358px; height:32px; --i:2"></div></div><p class="lb mono" style="width:150px">8.5</p><p class="lb f1">7.16 GB. Practically lossless</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">Q6_K</p><div style="width:690px"><div class="hbar gx" style="width:277px; height:32px; --i:3"></div></div><p class="lb mono" style="width:150px">6.6</p><p class="lb f1">5.53 GB. Extremely low loss</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">Q5_K_M</p><div style="width:690px"><div class="hbar gx" style="width:239px; height:32px; --i:4"></div></div><p class="lb mono" style="width:150px">5.7</p><p class="lb f1">4.78 GB. Very low loss</p></div>
+<div class="row ac" style="gap:20px"><p class="lbk mono or" style="width:150px">Q4_K_M</p><div style="width:690px"><div class="hbar gx" style="width:204px; height:32px; background:#E0672B; --i:5"></div></div><p class="lbk mono or" style="width:150px">4.8</p><p class="lbk or f1">4.08 GB. The usual default</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">Q3_K_M</p><div style="width:690px"><div class="hbar gx" style="width:165px; height:32px; background:#C9C4B6; --i:6"></div></div><p class="lb mono" style="width:150px">3.9</p><p class="lb f1">3.30 GB. Clearly worse</p></div>
+<div class="row ac" style="gap:20px"><p class="lb mono" style="width:150px">Q2_K</p><div style="width:690px"><div class="hbar gx" style="width:142px; height:32px; background:#C9C4B6; --i:7"></div></div><p class="lb mono" style="width:150px">~3.3</p><p class="lb f1">2.83 GB. Heavy loss</p></div>
+</div>
+<p class="sm mu">Real bits per weight exceed the nominal number: each block also stores its scale, and some tensors keep more bits.</p>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 26 · q-lowbit -->
+<section id="q-lowbit" data-page="26" class="s" data-transition="fade">
+<h2>Below four bits</h2>
+<p class="lede">Quality does not fall in proportion to the bits removed. It holds, then drops off a cliff.</p>
+<div class="bd">
+<div class="host af" style="width:840px; height:540px">
+<svg class="ab" style="left:0; top:0" width="840" height="540" viewBox="0 0 840 540" aria-label="Schematic: quality against bits per weight. The post-training curve is flat down to about five bits, dips at four and collapses below three. A dashed curve for models trained at low precision stays much higher.">
+<path d="M70 30 V420 H800" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<path d="M490 50 V420" stroke="#C9C4B6" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+<path d="M110 80 C 300 82, 450 96, 590 130 S 720 190, 750 215" stroke="#E0672B" stroke-width="5" stroke-dasharray="14 10" fill="none"/>
+<path d="M110 80 C 200 80, 300 84, 410 94 S 520 120, 590 190 S 670 340, 690 380" stroke="#2F6FB7" stroke-width="5" fill="none" stroke-dasharray="900" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.8s" begin="0s"/></path>
+<path d="M110 412V428M230 412V428M330 412V428M410 412V428M490 412V428M590 412V428M690 412V428M750 412V428" stroke="#0E1A24" stroke-width="3" fill="none"/>
+</svg>
+<p class="ab lbk" style="left:86px; top:22px; width:160px">quality ↑</p>
+<p class="ab lb mono ctr" style="left:80px; top:434px; width:60px">16</p>
+<p class="ab lb mono ctr" style="left:200px; top:434px; width:60px">8</p>
+<p class="ab lb mono ctr" style="left:300px; top:434px; width:60px">6</p>
+<p class="ab lb mono ctr" style="left:380px; top:434px; width:60px">5</p>
+<p class="ab lbk mono ctr" style="left:460px; top:434px; width:60px">4</p>
+<p class="ab lb mono ctr" style="left:560px; top:434px; width:60px">3</p>
+<p class="ab lb mono ctr" style="left:660px; top:434px; width:60px">2</p>
+<p class="ab lb mono ctr" style="left:716px; top:434px; width:70px">1.58</p>
+<p class="ab lbk" style="left:70px; top:478px; width:730px; text-align:center">bits per weight → fewer</p>
+<p class="ab lbk bl" style="left:430px; top:300px; width:230px">rounded after training</p>
+<p class="ab lbk or" style="left:560px; top:36px; width:240px">trained at low precision</p>
+<p class="ab sm mu" style="left:90px; top:340px; width:300px">Schematic shape, not measured data.</p>
+</div>
+<div class="col f1" style="gap:16px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>The 4-bit sweet spot</h3><p class="sm">For the same memory, a larger model at 4 bits usually beats a smaller model at 8 bits. Below about 3 bits the opposite holds: pick a smaller model.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Mixed precision</h3><p class="sm">Layers differ in sensitivity. Embeddings and the first and last layers often get more bits; the bulk in the middle gets fewer.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>BitNet b1.58</h3><p class="sm">Weights take only three values, −1, 0 and +1. That is log₂ 3 ≈ 1.58 bits. A matrix product becomes additions and subtractions.</p><p class="sm">It works only because the model is trained that way from scratch.</p></div>
+</div>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 27 · q-cheat -->
+<section id="q-cheat" data-page="27" class="s" data-transition="fade">
+<h2>Quantization in one page</h2>
+<p class="lede">Start with the cheapest method that could work, measure, and only then move down the table.</p>
+<div class="bd col" style="gap:20px">
+<table>
+<tr class="thd"><th style="width:31%">Situation</th><th style="width:33%">Reach for</th><th>Reason</th></tr>
+<tr><td>LLM / VLM on phone, laptop, CPU</td><td>4–5 bit weight-only (GGUF Q4_K_M)</td><td>Fits in memory; fewer bytes per token</td></tr>
+<tr><td>LLM on embedded or desktop GPU</td><td>FP16 if it fits, else 4-bit AWQ/GPTQ</td><td>Calibration keeps quality at 4 bits</td></tr>
+<tr><td>CNN or small transformer on NPU</td><td>Static INT8, per-channel, calibrated</td><td>The accelerator runs integers only</td></tr>
+<tr><td>Anything on a microcontroller</td><td>Full-integer INT8, usually with QAT</td><td>No float unit; no accuracy to spare</td></tr>
+<tr><td>PTQ loses too much quality</td><td>Calibration → mixed precision → QAT</td><td>Each step costs more than the last</td></tr>
+<tr><td>Fewer than 3 bits needed</td><td>Low-bit training, or a smaller model</td><td>Rounding alone falls off a cliff</td></tr>
+</table>
+<div class="row" style="gap:24px">
+<p class="fxl f1">r̂ = s · (q − z)</p>
+<p class="fxl f1">min ‖W·X − Ŵ·X‖²</p>
+<p class="fxl f1">∂L/∂w ≈ ∂L/∂ŵ</p>
+</div>
+<p class="sm mu">The three formulas of this part: the grid, the objective that GPTQ and AWQ minimize, and the trick that makes training through rounding possible.</p>
+</div>
+<p class="ft">Part 2 · Quantization</p>
+</section>
+<!-- 28 · kd-title -->
+<section id="kd-title" data-page="28" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">03</p>
+<h1 class="ar-in" style="--i:1">Knowledge distillation</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">Train a small model to imitate a large one. Unlike quantization, the result is a genuinely different, smaller network.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">What can a teacher’s output teach that a label cannot?</p>
+<p class="q af" style="--i:5">What is the temperature for?</p>
+<p class="q af" style="--i:6">How is an LLM distilled when you only see its text?</p>
+<p class="q af" style="--i:7">Why does distillation make robot policies faster?</p>
+</div>
+</div>
+</section>
+<!-- 29 · kd-idea -->
+<section id="kd-idea" data-page="29" class="s" data-transition="fade">
+<h2>Teacher and student</h2>
+<p class="lede">The same input goes to both models. The student is trained to produce what the teacher produces.</p>
+<div class="bd">
+<!-- IN 0,180,180,67  T 300,40,300,120  S 340,320,220,90  TO 720,66,260,67  SO 720,331,260,67  L 760,196,180,67 -->
+<div class="host" style="width:1000px; height:470px">
+<p class="ab n ap" style="left:0; top:180px; width:180px; --i:0">Input x</p>
+<div class="ab n n-k col jc ap" style="left:300px; top:40px; width:300px; height:120px; gap:2px; --i:1"><p class="tl k" style="color:#F6F4EE">Teacher</p><p class="sm" style="color:#C7D1DA">large, frozen</p></div>
+<div class="ab n n-b col jc ap" style="left:340px; top:320px; width:220px; height:90px; gap:2px; --i:1"><p class="lbk" style="color:#FFFDF8">Student</p><p class="sm" style="color:#FFFDF8">small, trained</p></div>
+<p class="ab n ap" style="left:720px; top:66px; width:260px; --i:3">soft predictions</p>
+<p class="ab n ap" style="left:720px; top:331px; width:260px; --i:3">predictions</p>
+<p class="ab n n-o ap" style="left:760px; top:196px; width:180px; --i:5">Loss</p>
+<x-connector class="cn af" style="--i:1" x1="90" y1="180" x2="300" y2="100" route="vh"></x-connector>
+<x-connector class="cn af" style="--i:1" x1="90" y1="247" x2="340" y2="365" route="vh"></x-connector>
+<x-connector class="cn af" style="--i:3" x1="600" y1="100" x2="720" y2="100"></x-connector>
+<x-connector class="cn af" style="--i:3" x1="560" y1="365" x2="720" y2="365"></x-connector>
+<x-connector class="cn af" style="--i:5" x1="850" y1="133" x2="850" y2="196"></x-connector>
+<x-connector class="cn af" style="--i:5" x1="850" y1="331" x2="850" y2="263"></x-connector>
+<x-connector class="cn-o af" style="border-style:dashed; --i:8" x1="760" y1="230" x2="450" y2="320" route="hv"></x-connector>
+<p class="ab lbk or af" style="left:466px; top:186px; width:280px; --i:8">gradient: student only</p>
+<p class="ab lb" style="left:0; top:428px; width:1000px">The teacher only runs forward. Its weights never change.</p>
+</div>
+<div class="col f1" style="gap:18px">
+<div class="card" style="padding:22px 28px; gap:8px"><h3>A label is one bit of advice</h3><p class="sm">“This image is a cat.” Nothing about how sure to be, or what it resembles.</p></div>
+<div class="card card-o" style="padding:22px 28px; gap:8px"><h3>A teacher’s output is a full answer</h3><p class="sm mono">cat 0.90 · lynx 0.07 · dog 0.02 · car 0.0001</p><p class="sm">The small numbers say that a lynx is nearly a cat and a car is not. Hinton called this dark knowledge.</p></div>
+<p class="t">A student trained on these outputs usually ends up better than the same small network trained on labels alone.</p>
+</div>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 30 · kd-temp -->
+<section id="kd-temp" data-page="30" class="s" data-transition="fade">
+<h2>Soft targets and temperature</h2>
+<p class="lede">The teacher’s logits are divided by a temperature T before the softmax. The same five logits (6, 3, 2, 0, −1) are shown at three temperatures.</p>
+<div class="bd col" style="gap:20px">
+<div class="cards f1">
+<div class="card" style="padding:22px 26px; gap:8px">
+<p class="tag">T = 1</p>
+<div class="trk" style="height:220px; gap:14px"><div class="bar gy" style="height:214px; --i:0"></div><div class="bar gy" style="height:11px; --i:0"></div><div class="bar gy" style="height:4px; --i:0"></div><div class="bar gy" style="height:2px; --i:0"></div><div class="bar gy" style="height:2px; --i:0"></div></div>
+<div class="row" style="gap:14px"><p class="lb ctr f1">cat</p><p class="lb ctr f1">lynx</p><p class="lb ctr f1">dog</p><p class="lb ctr f1">car</p><p class="lb ctr f1">ship</p></div>
+<p class="sm">Almost a hard label: cat gets 0.93. The similarities are there but too small to learn from.</p>
+</div>
+<div class="card card-o" style="padding:22px 26px; gap:8px">
+<p class="tag tag-k">T = 3</p>
+<div class="trk" style="height:220px; gap:14px"><div class="bar bar-o gy" style="height:123px; --i:4"></div><div class="bar bar-o gy" style="height:45px; --i:4"></div><div class="bar bar-o gy" style="height:33px; --i:4"></div><div class="bar bar-o gy" style="height:17px; --i:4"></div><div class="bar bar-o gy" style="height:12px; --i:4"></div></div>
+<div class="row" style="gap:14px"><p class="lb ctr f1">cat</p><p class="lb ctr f1">lynx</p><p class="lb ctr f1">dog</p><p class="lb ctr f1">car</p><p class="lb ctr f1">ship</p></div>
+<p class="sm">The ranking is intact and now visible: lynx is close to cat, ship is far. This is what the student should copy.</p>
+</div>
+<div class="card" style="padding:22px 26px; gap:8px">
+<p class="tag">T = 10</p>
+<div class="trk" style="height:220px; gap:14px"><div class="bar bar-g gy" style="height:66px; --i:8"></div><div class="bar bar-g gy" style="height:49px; --i:8"></div><div class="bar bar-g gy" style="height:44px; --i:8"></div><div class="bar bar-g gy" style="height:36px; --i:8"></div><div class="bar bar-g gy" style="height:33px; --i:8"></div></div>
+<div class="row" style="gap:14px"><p class="lb ctr f1">cat</p><p class="lb ctr f1">lynx</p><p class="lb ctr f1">dog</p><p class="lb ctr f1">car</p><p class="lb ctr f1">ship</p></div>
+<p class="sm">Nearly uniform. The answer itself is fading; too hot.</p>
+</div>
+</div>
+<div class="row ac" style="gap:32px">
+<p class="fx" style="width:800px; box-sizing:border-box">p_i = exp(z_i / <span class="ho">T</span>) ÷ Σ_j exp(z_j / <span class="ho">T</span>)</p>
+<p class="sm f1">T is a training-time knob only. It is applied to both teacher and student during distillation, then set back to 1 when the student is deployed.</p>
+</div>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 31 · kd-loss -->
+<section id="kd-loss" data-page="31" class="s" data-transition="fade">
+<h2>The distillation loss</h2>
+<p class="lede">The student answers to two supervisors at once: the true labels and the teacher.</p>
+<div class="bd col" style="gap:24px">
+<p class="fx ctr" style="font-size:34px; padding:32px 36px">L = α · <span class="hb">CE(y, p_s)</span> + (1 − α) · <span class="ho">T² · KL(p_t ‖ p_s)</span></p>
+<div class="cards f1">
+<div class="card card-b ar-in" style="--i:1">
+<p class="tag tag-b">Hard-label term</p>
+<h3>Match the ground truth</h3>
+<p class="sm">Ordinary cross-entropy between the true label y and the student’s prediction at T = 1. It keeps the student anchored when the teacher is wrong.</p>
+</div>
+<div class="card card-o ar-in" style="--i:3">
+<p class="tag tag-o">Soft-label term</p>
+<h3>Match the teacher</h3>
+<p class="sm">KL divergence between the teacher’s distribution p_t and the student’s p_s, both computed at temperature T. It is zero only when the two distributions are identical.</p>
+</div>
+<div class="card ar-in" style="--i:5">
+<p class="tag">The factor T²</p>
+<h3>Keep the two terms balanced</h3>
+<p class="sm">Dividing logits by T shrinks the soft term’s gradients by about 1/T². Multiplying by T² restores them, so α means the same thing at any temperature.</p>
+</div>
+</div>
+<p class="take" style="margin-top:0">α weights the two supervisors. In practice the teacher term usually gets most of the weight. Hinton, Vinyals and Dean, 2015.</p>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 32 · kd-what -->
+<section id="kd-what" data-page="32" class="s" data-transition="fade">
+<h2>What the student can copy</h2>
+<p class="lede">The final output is not the only signal. A teacher also exposes what it computes inside, and each level can be matched.</p>
+<div class="bd">
+<!-- T col x0 w300, S col x460 w300; rows top 50/170/290/410 h67; links y 83/203/323/443 -->
+<div class="host" style="width:760px; height:480px">
+<p class="ab lbk" style="left:0; top:0; width:300px">Teacher · 12 layers</p>
+<p class="ab lbk" style="left:460px; top:0; width:300px">Student · 4 layers</p>
+<p class="ab n n-k" style="left:0; top:50px; width:300px">Output probabilities</p>
+<p class="ab n n-g" style="left:0; top:170px; width:300px">Layer 12</p>
+<p class="ab n n-g" style="left:0; top:290px; width:300px">Layer 6</p>
+<p class="ab n n-g" style="left:0; top:410px; width:300px">Embeddings</p>
+<p class="ab n n-b" style="left:460px; top:50px; width:300px">Output probabilities</p>
+<p class="ab n n-bt" style="left:460px; top:170px; width:300px">Layer 4</p>
+<p class="ab n n-bt" style="left:460px; top:290px; width:300px">Layer 2</p>
+<p class="ab n n-bt" style="left:460px; top:410px; width:300px">Embeddings</p>
+<x-connector class="cn-o af" style="border-style:dashed; --i:2" x1="300" y1="83" x2="460" y2="83" head="both"></x-connector>
+<x-connector class="cn-o af" style="border-style:dashed; --i:4" x1="300" y1="203" x2="460" y2="203" head="both"></x-connector>
+<x-connector class="cn-o af" style="border-style:dashed; --i:5" x1="300" y1="323" x2="460" y2="323" head="both"></x-connector>
+<x-connector class="cn-o af" style="border-style:dashed; --i:6" x1="300" y1="443" x2="460" y2="443" head="both"></x-connector>
+<p class="ab lbk or ctr af" style="left:300px; top:42px; width:160px; --i:2">1</p>
+<p class="ab lbk or ctr af" style="left:300px; top:162px; width:160px; --i:4">2 and 3</p>
+<p class="ab lbk or ctr af" style="left:300px; top:282px; width:160px; --i:5">2 and 3</p>
+<p class="ab lbk or ctr af" style="left:300px; top:402px; width:160px; --i:6">2</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>1 · Outputs</h3><p class="sm">Match the final probabilities, as on the last two slides. Works for any pair of architectures.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>2 · Hidden states</h3><p class="sm">Match intermediate vectors with an MSE or cosine loss. A narrower student needs a small learned projection to the teacher’s width.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>3 · Attention maps</h3><p class="sm">Match which tokens attend to which. This transfers how the teacher relates tokens, and does not depend on the hidden width.</p></div>
+<p class="sm mu">DistilBERT uses 1 and 2. TinyBERT matches all three. MiniLM matches only last-layer attention.</p>
+</div>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 33 · kd-llm -->
+<section id="kd-llm" data-page="33" class="s" data-transition="fade">
+<h2>Distilling language models</h2>
+<p class="lede">Two routes, depending on whether you can look inside the teacher.</p>
+<div class="bd col" style="gap:14px">
+<div class="card" style="padding:16px 28px; gap:10px">
+<div class="row ac" style="gap:16px"><p class="tag tag-b">White-box</p><p class="sm">you hold the teacher’s weights</p></div>
+<div class="row ac" style="gap:14px">
+<p class="n as" style="width:170px; --i:0">Prompt</p><x-connector class="ar"></x-connector>
+<p class="n n-k as" style="width:210px; --i:2">Teacher</p><x-connector class="ar"></x-connector>
+<p class="n n-bt f1 as" style="--i:4">A probability for every word in the vocabulary, at every position</p><x-connector class="ar"></x-connector>
+<p class="n n-b as" style="width:400px; --i:6">Student matches them with KL</p>
+</div>
+<p class="sm">One sentence yields thousands of soft labels. The student can also match hidden states and attention.</p>
+</div>
+<div class="card" style="padding:16px 28px; gap:10px">
+<div class="row ac" style="gap:16px"><p class="tag tag-o">Black-box</p><p class="sm">you only see generated text, for example through an API</p></div>
+<div class="row ac" style="gap:14px">
+<p class="n as" style="width:170px; --i:8">Prompts</p><x-connector class="ar"></x-connector>
+<p class="n n-k as" style="width:210px; --i:10">Teacher</p><x-connector class="ar"></x-connector>
+<p class="n n-ot f1 as" style="--i:12">Generated answers, often with the reasoning steps written out</p><x-connector class="ar"></x-connector>
+<p class="n n-o as" style="width:400px; --i:14">Student is fine-tuned on this text</p>
+</div>
+<p class="sm">Also called synthetic-data distillation. Ordinary cross-entropy, no logits needed, but less information per example.</p>
+</div>
+<div class="row ac" style="gap:40px">
+<div class="col" style="gap:4px"><p class="num or">40%</p><p class="sm">smaller</p></div>
+<div class="col" style="gap:4px"><p class="num or">60%</p><p class="sm">faster</p></div>
+<div class="col" style="gap:4px"><p class="num or">97%</p><p class="sm">of the score kept</p></div>
+<p class="t f1">DistilBERT against BERT on language understanding: the result that made distillation standard practice for transformers. Sanh et al., 2019.</p>
+</div>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 34 · kd-steps -->
+<section id="kd-steps" data-page="34" class="s" data-transition="fade">
+<h2>Distilling steps instead of size</h2>
+<p class="lede">Diffusion and flow-matching models build their output by calling the network many times. A student can learn to arrive in far fewer calls.</p>
+<div class="bd col" style="gap:18px">
+<div class="row ac" style="gap:14px">
+<p class="lbk" style="width:130px">Teacher</p>
+<p class="n n-g" style="width:130px">noise</p><x-connector class="ar"></x-connector>
+<div class="row f1" style="gap:8px">
+<p class="n n-k f1 ap" style="--i:1">1</p><p class="n n-k f1 ap" style="--i:2">2</p><p class="n n-k f1 ap" style="--i:3">3</p><p class="n n-k f1 ap" style="--i:4">4</p><p class="n n-k f1 ap" style="--i:5">5</p><p class="n n-k f1 ap" style="--i:6">6</p><p class="n n-k f1 ap" style="--i:7">7</p><p class="n n-k f1 ap" style="--i:8">8</p>
+</div>
+<x-connector class="ar"></x-connector><p class="n" style="width:150px">output</p>
+</div>
+<div class="row ac" style="gap:14px">
+<p class="lbk or" style="width:130px">Student</p>
+<p class="n n-g" style="width:130px">noise</p><x-connector class="ar"></x-connector>
+<div class="row f1" style="gap:8px">
+<p class="n n-o f1 ap" style="--i:11">one call replaces four</p><p class="n n-o f1 ap" style="--i:13">one call replaces four</p>
+</div>
+<x-connector class="ar"></x-connector><p class="n" style="width:150px">output</p>
+</div>
+<p class="fxl ctr">latency ≈ number of steps × time per network call</p>
+<div class="cards f1" style="gap:24px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Progressive distillation</h3><p class="sm">The student learns to match two teacher steps with one. Then it becomes the teacher and the process repeats: 8 → 4 → 2 → 1. Salimans and Ho, 2022.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Consistency models</h3><p class="sm">The network learns to jump from any noisy point straight to the clean result, so one to four calls are enough. Song et al., 2023.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>Why robots care</h3><p class="sm">The action head of many VLAs is a diffusion or flow model. π0, for example, runs 10 steps for each chunk of actions. Fewer steps means a faster control loop.</p></div>
+</div>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 35 · kd-combine -->
+<section id="kd-combine" data-page="35" class="s" data-transition="fade">
+<h2>Where distillation fits</h2>
+<p class="lede">It is the most powerful compressor in this course, and the most expensive one.</p>
+<div class="bd col" style="gap:0">
+<div class="cards g2 f1" style="gap:24px">
+<div class="card card-b ar-in" style="--i:0"><h3>Use it when</h3><p class="sm">You need a much smaller model, 5× or more, or a different architecture altogether. Quantization and pruning cannot change a 12-layer network into a 4-layer one.</p></div>
+<div class="card ar-in" style="--i:1"><h3>What it costs</h3><p class="sm">A full training run for the student, plus a teacher forward pass for every training example. You need data, a training pipeline and GPU time.</p></div>
+<div class="card ar-in" style="--i:2"><h3>How it combines</h3><p class="sm">Distill first, then quantize the student. A teacher also helps recover quality after the other techniques: the full-precision model can supervise its own quantized or pruned copy.</p></div>
+<div class="card card-o ar-in" style="--i:3"><h3>Where it breaks</h3><p class="sm">A student that is too small cannot follow a much larger teacher; an intermediate-size “assistant” teacher can bridge the gap. The student also inherits the teacher’s mistakes.</p></div>
+</div>
+<p class="take">Distillation changes what the model is. Quantization and pruning change how an existing model is stored. They stack.</p>
+</div>
+<p class="ft">Part 3 · Distillation</p>
+</section>
+<!-- 36 · p-title -->
+<section id="p-title" data-page="36" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">04</p>
+<h1 class="ar-in" style="--i:1">Pruning and sparsity</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">Remove the parts that contribute least: single weights, whole neurons, attention heads, layers, or even input tokens.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">Which weights can go, and how is that decided?</p>
+<p class="q af" style="--i:5">Why does a half-empty model often run no faster?</p>
+<p class="q af" style="--i:6">How are LLMs pruned without retraining?</p>
+<p class="q af" style="--i:7">What is token pruning, and why do VLMs need it?</p>
+</div>
+</div>
+</section>
+<!-- 37 · p-idea -->
+<section id="p-idea" data-page="37" class="s" data-transition="fade">
+<h2>The idea: most connections barely matter</h2>
+<p class="lede">A trained network has more weights than it needs. Pruning sets the least useful ones to zero.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:12px">
+<svg width="760" height="480" viewBox="0 0 760 480" aria-label="A small three-layer network. About sixty percent of its connections fade to almost nothing while every neuron stays.">
+<g stroke="#8A8F98" stroke-width="3" fill="none" opacity="0.14"><animate attributeName="opacity" values="1;1;0.14" dur="2.6s" begin="0s"/><path d="M80 60L380 135M80 60L380 345M80 60L380 450M80 180L380 30M80 180L380 345M80 180L380 450M80 300L380 30M80 300L380 135M80 300L380 450M80 420L380 30M80 420L380 135M80 420L380 240M380 30L680 240M380 30L680 360M380 135L680 240M380 135L680 360M380 240L680 120M380 240L680 360M380 345L680 120M380 450L680 120M380 450L680 240"/></g>
+<path d="M80 60L380 30M80 60L380 240M80 180L380 135M80 180L380 240M80 300L380 240M80 300L380 345M80 420L380 345M80 420L380 450M380 30L680 120M380 135L680 120M380 240L680 240M380 345L680 240M380 345L680 360M380 450L680 360" stroke="#0E1A24" stroke-width="4" fill="none"/>
+<g fill="#2F6FB7"><circle cx="80" cy="60" r="22"/><circle cx="80" cy="180" r="22"/><circle cx="80" cy="300" r="22"/><circle cx="80" cy="420" r="22"/><circle cx="380" cy="30" r="22"/><circle cx="380" cy="135" r="22"/><circle cx="380" cy="240" r="22"/><circle cx="380" cy="345" r="22"/><circle cx="380" cy="450" r="22"/><circle cx="680" cy="120" r="22"/><circle cx="680" cy="240" r="22"/><circle cx="680" cy="360" r="22"/></g>
+</svg>
+<p class="lb">35 connections before, 14 after: a sparsity of 60%.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<p class="fxl">sparsity = zero weights ÷ all weights</p>
+<div class="card" style="padding:16px 26px; gap:6px"><h3>Why it is possible</h3><p class="sm">Extra capacity helps training, but the finished network does not use all of it. Most weights sit near zero and barely change the output.</p></div>
+<div class="card" style="padding:16px 26px; gap:6px"><h3>Why it is not free</h3><p class="sm">Each removed weight shifts the output a little. The rest are fine-tuned, or adjusted in closed form, to compensate.</p></div>
+<div class="card card-o" style="padding:16px 26px; gap:6px"><h3>The classic result</h3><p class="sm">Deep Compression removed 9 in 10 connections of AlexNet, then quantized and entropy-coded the rest: 35× smaller, same accuracy. Han et al., 2016.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 38 · p-struct -->
+<section id="p-struct" data-page="38" class="s" data-transition="fade">
+<h2>What to remove: three patterns</h2>
+<p class="lede">The same number of zeros can be arranged in very different ways. The arrangement decides whether hardware can profit. Blue cells are kept, pale cells are zero.</p>
+<div class="bd col" style="gap:0">
+<div class="cards f1">
+<div class="card ar-in" style="--i:0">
+<svg width="384" height="288" viewBox="0 0 384 288" aria-label="A weight matrix with zeros scattered at random"><rect width="384" height="288" fill="#2F6FB7"/><path d="M48 0h48v48h-48zM96 0h48v48h-48zM240 0h48v48h-48zM336 0h48v48h-48zM0 48h48v48h-48zM144 48h48v48h-48zM192 48h48v48h-48zM96 96h48v48h-48zM240 96h48v48h-48zM288 96h48v48h-48zM336 96h48v48h-48zM0 144h48v48h-48zM48 144h48v48h-48zM192 144h48v48h-48zM288 144h48v48h-48zM96 192h48v48h-48zM144 192h48v48h-48zM240 192h48v48h-48zM0 240h48v48h-48zM48 240h48v48h-48zM144 240h48v48h-48zM192 240h48v48h-48zM288 240h48v48h-48zM336 240h48v48h-48z" fill="#ECE8DE"/><path d="M48 0V288M96 0V288M144 0V288M192 0V288M240 0V288M288 0V288M336 0V288M0 48H384M0 96H384M0 144H384M0 192H384M0 240H384" stroke="#FFFDF8" stroke-width="3" fill="none"/></svg>
+<h3>Unstructured</h3>
+<p class="sm">Any individual weight can go. Keeps the most accuracy at a given sparsity, but the matrix keeps its shape, so speed needs special sparse kernels.</p>
+</div>
+<div class="card ar-in" style="--i:2">
+<svg width="384" height="288" viewBox="0 0 384 288" aria-label="A weight matrix where exactly two of every four consecutive weights in a row are zero"><rect width="384" height="288" fill="#2F6FB7"/><path d="M0 0h48v48h-48zM96 0h48v48h-48zM240 0h48v48h-48zM288 0h48v48h-48zM48 48h48v48h-48zM144 48h48v48h-48zM192 48h48v48h-48zM336 48h48v48h-48zM0 96h48v48h-48zM48 96h48v48h-48zM288 96h48v48h-48zM336 96h48v48h-48zM96 144h48v48h-48zM144 144h48v48h-48zM192 144h48v48h-48zM240 144h48v48h-48zM0 192h48v48h-48zM144 192h48v48h-48zM240 192h48v48h-48zM336 192h48v48h-48zM48 240h48v48h-48zM96 240h48v48h-48zM192 240h48v48h-48zM288 240h48v48h-48z" fill="#ECE8DE"/><path d="M48 0V288M96 0V288M144 0V288M240 0V288M288 0V288M336 0V288M0 48H384M0 96H384M0 144H384M0 192H384M0 240H384" stroke="#FFFDF8" stroke-width="3" fill="none"/><path d="M192 0V288" stroke="#0E1A24" stroke-width="5" fill="none"/></svg>
+<h3>Semi-structured, N:M</h3>
+<p class="sm">A fixed quota in every small group: here 2 zeros in each 4. Regular enough for hardware: recent NVIDIA GPUs have dedicated support for 2:4.</p>
+</div>
+<div class="card ar-in" style="--i:4">
+<svg width="384" height="288" viewBox="0 0 384 288" aria-label="A weight matrix where two whole rows and two whole columns are zero"><rect width="384" height="288" fill="#2F6FB7"/><path d="M0 48h384v48h-384zM0 192h384v48h-384zM96 0h48v288h-48zM288 0h48v288h-48z" fill="#ECE8DE"/><path d="M48 0V288M96 0V288M144 0V288M192 0V288M240 0V288M288 0V288M336 0V288M0 48H384M0 96H384M0 144H384M0 192H384M0 240H384" stroke="#FFFDF8" stroke-width="3" fill="none"/></svg>
+<h3>Structured</h3>
+<p class="sm">Whole rows and columns go: neurons, channels, heads, layers. The matrix becomes a smaller dense one, faster on any hardware, but accuracy suffers sooner.</p>
+</div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 39 · p-criteria -->
+<section id="p-criteria" data-page="39" class="s" data-transition="fade">
+<h2>Deciding which weights to remove</h2>
+<p class="lede">Every method gives each weight a score and removes the lowest. The methods differ in how much they know about the data.</p>
+<div class="bd col" style="gap:20px">
+<div class="cards g4 f1">
+<div class="card ar-in" style="padding:24px 24px; --i:0"><p class="tag">Magnitude</p><p class="fxs" style="padding:14px 18px">|w|</p><p class="sm">Small weights go first. Needs no data at all. The baseline that is hard to beat when fine-tuning follows.</p></div>
+<div class="card ar-in" style="padding:24px 24px; --i:1"><p class="tag">First-order</p><p class="fxs" style="padding:14px 18px">|w · ∂L/∂w|</p><p class="sm">A Taylor estimate of how much the loss changes if w becomes zero. Needs gradients on some data.</p></div>
+<div class="card ar-in" style="padding:24px 24px; --i:2"><p class="tag">Second-order</p><p class="fxs" style="padding:14px 18px">w² / (2·[H⁻¹]_ii)</p><p class="sm">Uses curvature, and also tells how to adjust the surviving weights. Optimal Brain Surgeon, 1993; the basis of SparseGPT.</p></div>
+<div class="card card-o ar-in" style="padding:24px 24px; --i:3"><p class="tag tag-k">Activation-aware</p><p class="fxs" style="padding:14px 18px">|w| · ‖x‖₂</p><p class="sm">Weight size times the size of the input it multiplies. One forward pass, no gradients. Wanda, 2024.</p></div>
+</div>
+<div class="row ac" style="gap:28px">
+<p class="lbk" style="width:250px">Why magnitude alone can mislead</p>
+<p class="fxl f1">w = 0.1, input ≈ 50 → output 5.0</p>
+<p class="fxl f1">w = 1.0, input ≈ 0.2 → output 0.2</p>
+</div>
+<p class="sm mu">Magnitude pruning would delete the first weight and keep the second. The activation-aware score gets it right, the same insight as AWQ in Part 2.</p>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 40 · p-schedule -->
+<section id="p-schedule" data-page="40" class="s" data-transition="fade">
+<h2>When to prune: all at once or gradually</h2>
+<p class="lede">A network can absorb a small cut and recover. It cannot absorb a large one as easily.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:16px">
+<!-- Train 0,0,190,67  Prune 250,0,230,67  Tune 540,0,220,67 -->
+<div class="host" style="width:760px; height:170px">
+<p class="ab n" style="left:0; top:0; width:190px">Train</p>
+<p class="ab n n-o" style="left:250px; top:0; width:230px">Prune a little</p>
+<p class="ab n n-bt" style="left:540px; top:0; width:220px">Fine-tune</p>
+<x-connector class="cn" x1="190" y1="33" x2="250" y2="33"></x-connector>
+<x-connector class="cn" x1="480" y1="33" x2="540" y2="33"></x-connector>
+<x-connector class="cn" x1="650" y1="67" x2="650" y2="118" head="none"></x-connector>
+<x-connector class="cn" x1="650" y1="118" x2="365" y2="118" head="none"></x-connector>
+<x-connector class="cn" x1="365" y1="118" x2="365" y2="67"></x-connector>
+<p class="ab lb" style="left:250px; top:132px; width:510px">repeat until the target sparsity is reached</p>
+</div>
+<div class="host af" style="width:760px; height:330px; --i:3">
+<svg class="ab" style="left:0; top:0" width="760" height="330" viewBox="0 0 760 330" aria-label="Sparsity against training steps. One line jumps to the target in a single step; the other rises smoothly and flattens at the target.">
+<path d="M60 20 V270 H740" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<path d="M60 60 H740" stroke="#C9C4B6" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+<path d="M60 270 H240 V60 H740" stroke="#2F6FB7" stroke-width="5" fill="none" stroke-linejoin="round"/>
+<path d="M60 270 H160 C 260 130, 400 66, 600 60 H740" stroke="#E0672B" stroke-width="5" fill="none" stroke-dasharray="900" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="900" to="0" dur="2s" begin="0s"/></path>
+</svg>
+<p class="ab lbk" style="left:76px; top:14px; width:200px">sparsity ↑</p>
+<p class="ab lbk bl" style="left:76px; top:150px; width:150px">one-shot</p>
+<p class="ab lbk or" style="left:420px; top:110px; width:200px">gradual</p>
+<p class="ab lb" style="left:560px; top:22px; width:180px; text-align:right">target</p>
+<p class="ab lbk" style="left:60px; top:284px; width:680px; text-align:center">training steps →</p>
+</div>
+</div>
+<div class="col f1" style="gap:16px">
+<div class="card card-b" style="padding:20px 26px; gap:6px"><h3>One-shot</h3><p class="sm">Cut to the target in a single step, then fine-tune, or not at all. Fast. Fine at moderate sparsity, and the only option for LLMs too large to retrain.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>Gradual</h3><p class="sm">Raise sparsity in small steps while training continues, so the network adapts after each cut. Reaches much higher sparsity at the same accuracy.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>The lottery ticket hypothesis</h3><p class="sm">A dense network contains a sparse sub-network that, trained alone from the same starting weights, matches the full one. Finding it still means training the dense network first. Frankle and Carbin, 2019.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 41 · p-speed -->
+<section id="p-speed" data-page="41" class="s" data-transition="fade">
+<h2>Why sparse does not mean fast</h2>
+<p class="lede">A zero stored in a dense matrix is still loaded, multiplied and added.</p>
+<div class="bd">
+<div class="host af" style="width:900px; height:530px">
+<svg class="ab" style="left:0; top:0" width="900" height="530" viewBox="0 0 900 530" aria-label="Schematic: speed-up against sparsity. Structured pruning rises steadily. Unstructured pruning with sparse kernels starts below one and only passes it at about seventy percent. Unstructured pruning with dense kernels stays flat at one.">
+<path d="M80 30 V440 H710" stroke="#0E1A24" stroke-width="3" fill="none"/>
+<path d="M80 380 H700" stroke="#8A8F98" stroke-width="4" stroke-dasharray="12 10" fill="none"/>
+<path d="M80 415 C 300 412, 470 395, 528 380 S 660 280, 700 200" stroke="#E0672B" stroke-width="5" fill="none"/>
+<path d="M80 380 C 300 330, 520 210, 700 60" stroke="#2F6FB7" stroke-width="5" fill="none" stroke-dasharray="800" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" from="800" to="0" dur="1.8s" begin="0s"/></path>
+<path d="M80 432V448M400 432V448M528 432V448M656 432V448" stroke="#0E1A24" stroke-width="3" fill="none"/>
+</svg>
+<p class="ab lbk" style="left:96px; top:22px; width:200px">speed-up ↑</p>
+<p class="ab lb mono" style="left:24px; top:364px; width:48px; text-align:right">1×</p>
+<p class="ab lb mono ctr" style="left:40px; top:452px; width:80px">0%</p>
+<p class="ab lb mono ctr" style="left:360px; top:452px; width:80px">50%</p>
+<p class="ab lb mono ctr" style="left:488px; top:452px; width:80px">70%</p>
+<p class="ab lb mono ctr" style="left:616px; top:452px; width:80px">90%</p>
+<p class="ab lbk" style="left:80px; top:492px; width:630px; text-align:center">sparsity →</p>
+<p class="ab lbk bl" style="left:716px; top:44px; width:184px">structured</p>
+<p class="ab lbk or" style="left:716px; top:170px; width:184px">unstructured, sparse kernels</p>
+<p class="ab lbk mu" style="left:716px; top:350px; width:184px">unstructured, dense kernels</p>
+<p class="ab sm mu" style="left:110px; top:90px; width:300px">Schematic shape, not measured data.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:16px 26px; gap:6px"><h3>A zero still costs a multiply</h3><p class="sm">Dense kernels process every entry. Unless zeros are skipped, a pruned model runs exactly as fast as before.</p></div>
+<div class="card card-o" style="padding:16px 26px; gap:6px"><h3>Skipping zeros has overhead</h3><p class="sm">Sparse formats store an index beside each value and jump around in memory, defeating SIMD. They pay off only above roughly 70% sparsity, with dedicated kernels.</p></div>
+<div class="card card-b" style="padding:16px 26px; gap:6px"><h3>Structure buys real speed</h3><p class="sm">Removing whole channels, heads or layers leaves a smaller dense model. 2:4 patterns can double matrix throughput on GPUs built for them; end-to-end gains vary.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 42 · p-llm -->
+<section id="p-llm" data-page="42" class="s" data-transition="fade">
+<h2>Pruning large language models</h2>
+<p class="lede">As with quantization, the methods work layer by layer on a little calibration data.</p>
+<div class="bd">
+<div class="col" style="width:420px; gap:10px">
+<p class="lbk">Structured targets</p>
+<p class="n n-b n-s">Layer 6</p>
+<p class="n n-g n-da n-s af" style="--i:4">Layer 5 · removed</p>
+<p class="n n-b n-s">Layer 4</p>
+<p class="n n-b n-s">Layer 3</p>
+<p class="n n-g n-da n-s af" style="--i:7">Layer 2 · removed</p>
+<p class="n n-b n-s">Layer 1</p>
+<p class="lb" style="margin-top:10px">Inside a layer: attention heads</p>
+<div class="row" style="gap:8px"><div class="sq sq-o"></div><div class="sq sq-o"></div><div class="sq sq-e"></div><div class="sq sq-o"></div><div class="sq sq-o"></div><div class="sq sq-e"></div><div class="sq sq-o"></div><div class="sq sq-o"></div></div>
+<p class="lb">and MLP neurons</p>
+<div class="row" style="gap:8px"><div class="sq"></div><div class="sq sq-e"></div><div class="sq"></div><div class="sq"></div><div class="sq sq-e"></div><div class="sq sq-e"></div><div class="sq"></div><div class="sq"></div><div class="sq sq-e"></div><div class="sq"></div><div class="sq"></div></div>
+</div>
+<div class="col f1" style="gap:16px">
+<table>
+<tr class="thd"><th style="width:21%">Method</th><th style="width:19%">Pattern</th><th>How it works</th></tr>
+<tr><td>SparseGPT, 2023</td><td>Unstructured or 2:4</td><td>Remove weights in a layer, then solve for the best values of the rest. No retraining</td></tr>
+<tr><td>Wanda, 2024</td><td>Unstructured or 2:4</td><td>Score each weight by |w|·‖x‖ within its output row and delete the lowest. No weight update</td></tr>
+<tr><td>LLM-Pruner, 2023</td><td>Structured</td><td>Find coupled groups of weights with gradients, remove them, recover with LoRA</td></tr>
+<tr><td>Layer dropping</td><td>Structured</td><td>Delete whole blocks that change the hidden state least</td></tr>
+</table>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>How it compares with quantization</h3><p class="sm">At 50% unstructured sparsity these methods stay close to the dense model. But 4-bit quantization is 4× smaller with no special kernels, so LLM pruning is mostly structured, on top of quantization.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 43 · p-tokens -->
+<section id="p-tokens" data-page="43" class="s" data-transition="fade">
+<h2>Pruning tokens instead of weights</h2>
+<p class="lede">A VLM turns each image into hundreds of tokens, and every LLM layer processes all of them.</p>
+<div class="bd">
+<div class="col" style="width:720px; gap:10px">
+<div class="row" style="gap:24px">
+<div class="col" style="gap:8px"><svg width="336" height="252" viewBox="0 0 448 252" preserveAspectRatio="none" aria-label="A grid of visual tokens, all active"><rect width="448" height="252" fill="#E0672B"/><path d="M28 0V252M56 0V252M84 0V252M112 0V252M140 0V252M168 0V252M196 0V252M224 0V252M252 0V252M280 0V252M308 0V252M336 0V252M364 0V252M392 0V252M420 0V252M0 28H448M0 56H448M0 84H448M0 112H448M0 140H448M0 168H448M0 196H448M0 224H448" stroke="#FFFDF8" stroke-width="2" fill="none"/></svg><p class="lb ctr">all visual tokens</p></div>
+<div class="col" style="gap:8px"><svg width="336" height="252" viewBox="0 0 448 252" preserveAspectRatio="none" aria-label="The same grid with three quarters of the tokens removed; the survivors cluster on the object in the middle"><rect width="448" height="252" fill="#ECE8DE"/><path d="M140 56h168v140h-168zM28 0h28v28h-28zM364 28h28v28h-28zM84 196h28v28h-28zM336 224h28v28h-28zM392 84h28v28h-28zM28 168h28v28h-28z" fill="#E0672B"><animate attributeName="opacity" values="0;0;1" dur="1.8s" begin="0s"/></path><path d="M28 0V252M56 0V252M84 0V252M112 0V252M140 0V252M168 0V252M196 0V252M224 0V252M252 0V252M280 0V252M308 0V252M336 0V252M364 0V252M392 0V252M420 0V252M0 28H448M0 56H448M0 84H448M0 112H448M0 140H448M0 168H448M0 196H448M0 224H448" stroke="#FFFDF8" stroke-width="2" fill="none"/></svg><p class="lb ctr">after pruning: 25% kept</p></div>
+</div>
+<p class="lbk" style="margin-top:14px">Tokens the LLM must process</p>
+<div class="row ac" style="gap:4px"><div class="hbar gx" style="width:576px; background:#E0672B"></div><div class="hbar" style="width:40px"></div></div>
+<p class="lb">before: 576 visual + about 40 text</p>
+<div class="row ac" style="gap:4px"><div class="hbar gx" style="width:144px; background:#E0672B; --i:6"></div><div class="hbar" style="width:40px"></div></div>
+<p class="lb">after: 144 visual + about 40 text</p>
+</div>
+<div class="col f1" style="gap:14px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Images are expensive prompts</h3><p class="sm">LLaVA-1.5 turns one image into 576 tokens; the question adds a few dozen. Attention cost grows with the square of the total.</p></div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>FastV: drop tokens inside the LLM</h3><p class="sm">After two layers, most visual tokens get almost no attention. Dropping the weakest half saves about 45% of the compute, untrained.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>ToMe: merge tokens in the vision encoder</h3><p class="sm">Similar patches are merged into one token, layer by layer: about 2× throughput on large ViTs for a 0.2–0.3% accuracy drop.</p></div>
+<div class="card card-b" style="padding:18px 26px; gap:6px"><h3>Or design for few tokens</h3><p class="sm">SmolVLA starts with only 64 visual tokens per camera frame.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 44 · p-lowrank -->
+<section id="p-lowrank" data-page="44" class="s" data-transition="fade">
+<h2>Low-rank factorization</h2>
+<p class="lede">A cousin of pruning: instead of deleting entries of a weight matrix, replace the matrix with the product of two thin ones.</p>
+<div class="bd">
+<div class="col" style="width:800px; gap:24px">
+<div class="row ac jc" style="gap:22px; height:330px">
+<div class="n n-b col jc ap" style="width:300px; height:300px; gap:4px; --i:0"><p class="tl k" style="color:#FFFDF8">W</p><p class="sm" style="color:#FFFDF8">m × n</p></div>
+<p class="num2">≈</p>
+<div class="n n-o col jc ap" style="width:84px; height:300px; padding:8px; gap:4px; --i:3"><p class="tl k">U</p><p class="sm" style="color:#0E1A24">m × r</p></div>
+<p class="num2">·</p>
+<div class="n n-o col jc ap" style="width:300px; height:84px; padding:8px; gap:0; --i:5"><p class="lbk">V · r × n</p></div>
+</div>
+<p class="fx ctr">parameters: m·n  →  <span class="ho">r·(m + n)</span></p>
+<p class="fxl ctr">4096² = 16.8M → r = 256: 2.1M (8× fewer)</p>
+</div>
+<div class="col f1" style="gap:16px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Where U and V come from</h3><p class="sm">The singular value decomposition gives the best rank-r approximation of W: keep the r largest singular values and drop the rest.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>The catch</h3><p class="sm">LLM weight matrices are not very low-rank, so plain SVD loses a lot. Practical methods weight the decomposition by the activations and fine-tune afterwards.</p></div>
+<div class="card card-b" style="padding:20px 26px; gap:6px"><h3>LoRA has the same shape</h3><p class="sm">LoRA keeps W frozen and trains a low-rank update ΔW = B·A. It is the standard cheap way to recover quality after pruning or quantization.</p></div>
+</div>
+</div>
+<p class="ft">Part 4 · Pruning</p>
+</section>
+<!-- 45 · nas-title -->
+<section id="nas-title" data-page="45" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">05</p>
+<h1 class="ar-in" style="--i:1">Efficient architectures and NAS</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">Instead of shrinking a large network afterwards, start from one that is efficient by design, and let a search algorithm do the designing.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">Which building blocks make a network cheap?</p>
+<p class="q af" style="--i:5">How are small language models designed?</p>
+<p class="q af" style="--i:6">How does a computer search for an architecture?</p>
+<p class="q af" style="--i:7">How does the target hardware enter the search?</p>
+</div>
+</div>
+</section>
+<!-- 46 · nas-blocks -->
+<section id="nas-blocks" data-page="46" class="s" data-transition="fade">
+<h2>Efficient building blocks</h2>
+<p class="lede">The best-known example is the depthwise-separable convolution of MobileNet: split one expensive operation into two cheap ones.</p>
+<div class="bd col" style="gap:20px">
+<div class="cards g2 f1">
+<div class="card" style="gap:14px">
+<p class="tag">Standard convolution</p>
+<p class="n n-k">3×3 filters, each reads all M input channels</p>
+<p class="fxl">cost = k² · M · N</p>
+<div class="row ac" style="gap:16px"><div class="hbar bar-k gx" style="width:580px"></div><p class="lbk">589,824</p></div>
+<p class="sm">Every one of the N output channels looks at a k × k window across every input channel. Spatial filtering and channel mixing happen in one step.</p>
+</div>
+<div class="card card-o" style="gap:14px">
+<p class="tag tag-k">Depthwise-separable</p>
+<div class="row ac" style="gap:12px"><p class="n n-bt f1 as" style="--i:2">3×3 depthwise: one filter per channel</p><x-connector class="ar"></x-connector><p class="n n-bt f1 as" style="--i:4">1×1 pointwise: mix the channels</p></div>
+<p class="fxl">cost = k² · M + M · N</p>
+<div class="row ac" style="gap:16px"><div class="hbar gx" style="width:67px; background:#E0672B; --i:5"></div><p class="lbk">67,840</p></div>
+<p class="sm">Filter each channel on its own, then mix channels with a 1 × 1 convolution. Same output shape, a fraction of the work.</p>
+</div>
+</div>
+<div class="row ac" style="gap:32px">
+<p class="fx" style="width:880px; box-sizing:border-box">ratio = 1/N + 1/k² <span class="hg">≈ 8–9× less (3×3)</span></p>
+<p class="sm f1">The bars use M = N = 256 and k = 3. The same factorization idea returns in bottleneck blocks, grouped convolutions and, in transformers, grouped-query attention.</p>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 47 · nas-slm -->
+<section id="nas-slm" data-page="47" class="s" data-transition="fade">
+<h2>Small language models by design</h2>
+<p class="lede">Models built for devices from the start. Their small size comes from deliberate design choices.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:12px">
+<p class="lbk">Parameters, in billions</p>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">Gemma 3 270M</p><div class="hbar gx" style="width:16px; --i:0"></div><p class="lb mono">0.27</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">Llama 3.2 1B</p><div class="hbar gx" style="width:74px; --i:1"></div><p class="lb mono">1.2</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">SmolLM2 1.7B</p><div class="hbar gx" style="width:102px; --i:2"></div><p class="lb mono">1.7</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">Gemma 2 2B</p><div class="hbar gx" style="width:156px; --i:3"></div><p class="lb mono">2.6</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">Llama 3.2 3B</p><div class="hbar gx" style="width:192px; --i:4"></div><p class="lb mono">3.2</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:230px">Phi-3-mini</p><div class="hbar gx" style="width:228px; --i:5"></div><p class="lb mono">3.8</p></div>
+<div class="row ac" style="gap:16px"><p class="lb mu" style="width:230px">Llama 2 7B, for scale</p><div class="hbar gx" style="width:404px; background:#C9C4B6; --i:6"></div><p class="lb mono mu">6.7</p></div>
+<p class="sm" style="margin-top:12px">At 4-bit, memory in GB is roughly 0.6 × the number of billions: a 3B model needs about 2 GB, which a phone can spare.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Deep and thin</h3><p class="sm">At a fixed small budget, more layers with fewer dimensions each tend to beat fewer wide layers (MobileLLM, 2024).</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Share the embeddings</h3><p class="sm">The token table is a large share of a small model: 0.59B of Gemma 2 2B’s 2.6B. One shared table serves input and output.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Grouped-query attention</h3><p class="sm">Several query heads share one key-value head. Fewer weights, and a much smaller KV cache at run time.</p></div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>Then distill</h3><p class="sm">Small models are usually trained with a large teacher or on teacher-generated data. Architecture and distillation go together.</p></div>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 48 · nas-loop -->
+<section id="nas-loop" data-page="48" class="s" data-transition="fade">
+<h2>Neural architecture search: the loop</h2>
+<p class="lede">NAS automates the trial-and-error loop that a human designer runs. Every NAS method is a choice for each of three parts.</p>
+<div class="bd col" style="gap:0">
+<!-- A 0,0,480,250  B 592,0,480,250  C 1184,0,480,250 ; loop back from C bottom (1424,250) via y=312 to B bottom (832,250) -->
+<div class="host" style="width:1664px; height:370px">
+<div class="ab n n-bt col ap" style="left:0; top:0; width:480px; height:250px; padding:26px 28px; gap:10px; text-align:left; font-weight:400; --i:0"><p class="eb" style="color:#235A96">1 · Search space</p><h3>What can be built</h3><p class="sm">The allowed layer types, depths, widths, kernel sizes and connections.</p></div>
+<div class="ab n col ap" style="left:592px; top:0; width:480px; height:250px; padding:26px 28px; gap:10px; text-align:left; font-weight:400; --i:2"><p class="eb">2 · Search strategy</p><h3>What to try next</h3><p class="sm">Reinforcement learning, evolution, or gradient descent picks the next candidate.</p></div>
+<div class="ab n n-ot col ap" style="left:1184px; top:0; width:480px; height:250px; padding:26px 28px; gap:10px; text-align:left; font-weight:400; --i:4"><p class="eb">3 · Evaluation</p><h3>How good it is</h3><p class="sm">Train the candidate and measure it, or estimate its quality with a cheaper proxy.</p></div>
+<x-connector class="cn af" style="--i:1" x1="480" y1="125" x2="592" y2="125"></x-connector>
+<x-connector class="cn af" style="--i:3" x1="1072" y1="125" x2="1184" y2="125"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="1424" y1="250" x2="1424" y2="312" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="1424" y1="312" x2="832" y2="312" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="832" y1="312" x2="832" y2="250"></x-connector>
+<p class="ab lbk or af" style="left:860px; top:326px; width:560px; --i:6">feedback: each score guides the next choice</p>
+</div>
+<div class="sp"></div>
+<div class="row" style="gap:32px">
+<p class="t f1"><b>The cost is in step 3.</b> Training one candidate takes hours, and a search tries thousands. Most progress in NAS has come from making evaluation cheaper.</p>
+<p class="t f1"><b>The space matters most.</b> A search can only find what the space contains. A good space, designed by people, is half the result.</p>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 49 · nas-strategies -->
+<section id="nas-strategies" data-page="49" class="s" data-transition="fade">
+<h2>Four search strategies</h2>
+<p class="lede">They differ in how the next candidate is chosen, and above all in how much computing the search consumes.</p>
+<div class="bd col" style="gap:20px">
+<table>
+<tr class="thd"><th style="width:22%">Strategy</th><th style="width:58%">Idea</th><th>Known for</th></tr>
+<tr><td>Reinforcement learning</td><td>A controller proposes designs and is rewarded by their accuracy</td><td>NASNet</td></tr>
+<tr><td>Evolution</td><td>Mutate and recombine the best members of a population of designs</td><td>AmoebaNet</td></tr>
+<tr><td>Differentiable</td><td>Mix all options with learnable weights, trained by gradient descent</td><td>DARTS</td></tr>
+<tr><td>One-shot supernet</td><td>Train one network containing every candidate; reuse its weights</td><td>Once-for-All</td></tr>
+</table>
+<div class="col" style="gap:12px">
+<p class="lbk">Search cost in GPU-days, on a logarithmic scale</p>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:380px">Reinforcement learning, 2017</p><div class="hbar bar-k gx" style="width:652px; --i:1"></div><p class="lbk mono">22,400</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:380px">NASNet, 2018</p><div class="hbar bar-k gx" style="width:495px; --i:3"></div><p class="lbk mono">2,000</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:380px">DARTS, 2019</p><div class="hbar gx" style="width:90px; background:#E0672B; --i:5"></div><p class="lbk mono or">1.5 – 4</p></div>
+</div>
+<div class="sp"></div>
+<p class="take" style="margin-top:0">In two years, the cost of a search fell several thousand-fold.</p>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 50 · nas-hw -->
+<section id="nas-hw" data-page="50" class="s" data-transition="fade">
+<h2>Hardware-aware search</h2>
+<p class="lede">Put the target device inside the loop: measure each candidate’s real latency and make it part of the score.</p>
+<div class="bd">
+<!-- S 0,150,250,67  C 310,150,200,67  T 590,40,360,67  D 590,260,360,67  R 640,150,260,67 -->
+<div class="col" style="width:1000px; gap:16px">
+<div class="host" style="width:1000px; height:430px">
+<p class="ab n" style="left:0; top:150px; width:250px">Search strategy</p>
+<p class="ab n n-bt" style="left:310px; top:150px; width:200px">Candidate</p>
+<p class="ab n ap" style="left:590px; top:40px; width:360px; --i:2">Train it: accuracy</p>
+<p class="ab n n-k ap" style="left:590px; top:260px; width:360px; --i:2">On device: latency</p>
+<p class="ab n n-o ap" style="left:640px; top:150px; width:260px; --i:4">Reward</p>
+<x-connector class="cn" x1="250" y1="183" x2="310" y2="183"></x-connector>
+<x-connector class="cn af" style="--i:2" x1="410" y1="150" x2="590" y2="73" route="vh"></x-connector>
+<x-connector class="cn af" style="--i:2" x1="410" y1="217" x2="590" y2="293" route="vh"></x-connector>
+<x-connector class="cn af" style="--i:4" x1="770" y1="107" x2="770" y2="150"></x-connector>
+<x-connector class="cn af" style="--i:4" x1="770" y1="260" x2="770" y2="217"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="900" y1="183" x2="980" y2="183" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="980" y1="183" x2="980" y2="370" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="980" y1="370" x2="125" y2="370" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="125" y1="370" x2="125" y2="217"></x-connector>
+<p class="ab lbk or af" style="left:300px; top:384px; width:600px; --i:6">one score that combines both</p>
+</div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>One winner per device</h3><p class="sm">The best design for a CPU differs from the best for a GPU or an NPU.</p></div>
+</div>
+<div class="col f1" style="gap:14px">
+<p class="fx">reward = ACC × (LAT / T)^w</p>
+<p class="sm mu">MnasNet, 2019: T is the latency target, w = −0.07, and latency was measured on a real phone.</p>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>FLOPs are not latency</h3><p class="sm">Two networks with equal FLOPs can differ widely on a real chip. Memory access, parallelism and operator support all matter.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Measure once, then predict</h3><p class="sm">Timing every candidate on a phone is slow. Time each layer type once, store a table, and add up.</p></div>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 51 · nas-ofa -->
+<section id="nas-ofa" data-page="51" class="s" data-transition="fade">
+<h2>Once-for-All: train once, specialize many times</h2>
+<p class="lede">Searching and retraining for every new device does not scale. One supernet can contain a model for each of them.</p>
+<div class="bd">
+<!-- SUPER 0,40,360,380  L 520,40,330,110  M 520,190,240,100  S 520,330,160,90 -->
+<div class="host" style="width:900px; height:440px">
+<div class="ab n n-k col jc ap" style="left:0; top:40px; width:360px; height:380px; gap:6px; --i:0"><p class="tl k" style="color:#F6F4EE">Supernet</p><p class="sm" style="color:#C7D1DA">every layer supports several depths, widths and kernel sizes</p><p class="sm" style="color:#FF9A62">trained once</p></div>
+<div class="ab n n-b col jc ap" style="left:520px; top:40px; width:330px; height:110px; gap:2px; --i:3"><p class="lbk" style="color:#FFFDF8">for a cloud GPU</p><p class="sm" style="color:#FFFDF8">deep, wide</p></div>
+<div class="ab n n-bt col jc ap" style="left:520px; top:190px; width:240px; height:100px; gap:2px; --i:5"><p class="lbk">for a phone</p><p class="sm">medium</p></div>
+<div class="ab n n-ot col jc ap" style="left:520px; top:330px; width:210px; height:90px; gap:2px; --i:7"><p class="lbk">for an MCU</p><p class="sm">tiny</p></div>
+<x-connector class="cn af" style="--i:3" x1="360" y1="95" x2="520" y2="95"></x-connector>
+<x-connector class="cn af" style="--i:5" x1="360" y1="240" x2="520" y2="240"></x-connector>
+<x-connector class="cn af" style="--i:7" x1="360" y1="375" x2="520" y2="375"></x-connector>
+<p class="ab lb" style="left:0; top:0; width:900px">Sub-networks are cut out of the supernet and keep its weights: no retraining.</p>
+</div>
+<div class="col f1" style="gap:16px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Elastic in four ways</h3><p class="sm">Depth, width, kernel size and input resolution can each be reduced. More than 10¹⁹ sub-networks share one set of weights.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Progressive shrinking</h3><p class="sm">Train the largest network first, then fine-tune to support smaller and smaller ones, so the small ones do not disturb the large.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>Specializing is cheap</h3><p class="sm">For a new device, search among sub-networks with an accuracy predictor and a latency table. Minutes, not GPU-days. Cai et al., 2020.</p></div>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 52 · nas-auto -->
+<section id="nas-auto" data-page="52" class="s" data-transition="fade">
+<h2>Searching compression settings</h2>
+<p class="lede">The same loop can choose how to compress a network: the bits and the sparsity for each layer.</p>
+<div class="bd">
+<div class="col" style="width:700px; gap:10px">
+<p class="lbk">Bits chosen for each layer <span class="mu">(illustrative)</span></p>
+<div class="trk" style="height:260px; gap:10px">
+<div class="bar bar-k gy" style="height:240px; --i:0"></div><div class="bar bar-k gy" style="height:240px; --i:0"></div><div class="bar gy" style="height:180px; --i:1"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar bar-o gy" style="height:120px; --i:2"></div><div class="bar gy" style="height:180px; --i:1"></div><div class="bar bar-k gy" style="height:240px; --i:0"></div><div class="bar bar-k gy" style="height:240px; --i:0"></div>
+</div>
+<div class="row jb"><p class="lb">first layers</p><p class="lb">middle layers</p><p class="lb">last layers</p></div>
+<div class="row" style="gap:28px; margin-top:8px"><div class="lg"><div class="sq sq-k"></div><p>8 bits</p></div><div class="lg"><div class="sq"></div><p>6 bits</p></div><div class="lg"><div class="sq sq-o"></div><p>4 bits</p></div></div>
+<p class="sm" style="margin-top:8px">A typical outcome: sensitive layers at the two ends keep more bits, and the bulk in the middle is squeezed hardest.</p>
+</div>
+<div class="col f1" style="gap:10px">
+<div class="card" style="padding:14px 26px; gap:4px"><h3>AMC: sparsity per layer</h3><p class="sm">A reinforcement-learning agent picks a pruning ratio for each layer instead of one global ratio. He et al., 2018.</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><h3>HAQ: bits per layer</h3><p class="sm">The agent picks a bit width per layer, guided by latency and energy read from the hardware. Wang et al., 2019.</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><h3>HAT: transformers per device</h3><p class="sm">A supernet of transformer shapes plus a latency predictor yields a different model for each chip. Wang et al., 2020.</p></div>
+<div class="card card-o" style="padding:14px 26px; gap:4px"><h3>For LLMs today</h3><p class="sm">Full architecture search is too costly at this scale. Search answers narrower questions: which layers to drop, bits per layer, how many tokens.</p></div>
+</div>
+</div>
+<p class="ft">Part 5 · Architectures</p>
+</section>
+<!-- 53 · k-title -->
+<section id="k-title" data-page="53" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">06</p>
+<h1 class="ar-in" style="--i:1">Kernels, compilers and runtimes</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">The model is now as small as it will get. What remains is to execute it well: the same outputs in less time.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">What happens between a model file and machine code?</p>
+<p class="q af" style="--i:5">What is a kernel, and why are some so much faster?</p>
+<p class="q af" style="--i:6">Why does one model behave differently on CPU, GPU and NPU?</p>
+<p class="q af" style="--i:7">Which runtime tricks are specific to LLMs?</p>
+</div>
+</div>
+</section>
+<!-- 54 · k-pipeline -->
+<section id="k-pipeline" data-page="54" class="s" data-transition="fade">
+<h2>From model file to machine code</h2>
+<p class="lede">A trained model is a description of a computation. Four more steps turn it into instructions a particular chip executes.</p>
+<div class="bd col" style="gap:24px">
+<div class="row" style="gap:10px">
+<div class="card f1 as" style="padding:22px 22px; gap:8px; --i:0"><p class="tag">1 · Train</p><h3>Framework model</h3><p class="sm">PyTorch code and weights. Flexible, built for research.</p></div>
+<x-connector class="ar" style="width:36px"></x-connector>
+<div class="card f1 as" style="padding:22px 22px; gap:8px; --i:2"><p class="tag">2 · Export</p><h3>Portable graph</h3><p class="sm">A fixed list of operators and tensors: ONNX, GGUF, .tflite, .pte.</p></div>
+<x-connector class="ar" style="width:36px"></x-connector>
+<div class="card card-b f1 as" style="padding:22px 22px; gap:8px; --i:4"><p class="tag tag-b">3 · Optimize</p><h3>Graph rewrite</h3><p class="sm">Fuse operators, fold constants, plan memory. Outputs stay the same.</p></div>
+<x-connector class="ar" style="width:36px"></x-connector>
+<div class="card card-o f1 as" style="padding:22px 22px; gap:8px; --i:6"><p class="tag tag-o">4 · Lower</p><h3>Kernels chosen</h3><p class="sm">Each operator is mapped to an implementation for this chip.</p></div>
+<x-connector class="ar" style="width:36px"></x-connector>
+<div class="card card-k f1 as" style="padding:22px 22px; gap:8px; --i:8"><p class="tag tag-o">5 · Run</p><h3>Runtime</h3><p class="sm">Loads weights, manages memory and threads, calls the kernels.</p></div>
+</div>
+<div class="cards g2 f1" style="gap:24px">
+<div class="card" style="padding:22px 28px; gap:8px"><h3>Style A: interpreter plus kernel library</h3><p class="sm">The runtime walks the graph and calls a pre-written, hand-tuned kernel for each operator. Portable and easy to debug. LiteRT, ONNX Runtime, ExecuTorch and llama.cpp work this way.</p></div>
+<div class="card" style="padding:22px 28px; gap:8px"><h3>Style B: ahead-of-time compiler</h3><p class="sm">A compiler generates code specialized for this exact model on this exact chip, and can tune it by measuring. More speed, less portability. TVM, IREE and a TensorRT engine build work this way.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 55 · k-graph -->
+<section id="k-graph" data-page="55" class="s" data-transition="fade">
+<h2>Graph-level optimization</h2>
+<p class="lede">Before any kernel runs, the graph is rewritten into an equivalent one with fewer, larger operators.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:14px">
+<div class="row ac" style="gap:20px">
+<div class="col f1" style="gap:0">
+<p class="lbk" style="margin-bottom:10px">As exported</p>
+<p class="n">Convolution · W, b</p>
+<x-connector class="ad"></x-connector>
+<p class="n n-ot">BatchNorm · γ, β, μ, σ²</p>
+<x-connector class="ad"></x-connector>
+<p class="n">ReLU</p>
+</div>
+<x-shape kind="arrow-right" style="width:56px; height:32px; background:#0E1A24"></x-shape>
+<div class="col f1" style="gap:0">
+<p class="lbk or" style="margin-bottom:10px">After fusion</p>
+<p class="n n-o ap" style="padding:60px 16px; --i:3">Convolution + ReLU · W′, b′</p>
+</div>
+</div>
+<p class="fxs">W′ = W · γ / √(σ² + ε)<br>b′ = (b − μ) · γ / √(σ² + ε) + β</p>
+<p class="sm">At inference BatchNorm is just a fixed scale and shift, so it can be absorbed into the convolution’s weights once, offline. One pass over memory instead of three.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Operator fusion</h3><p class="sm">Merge neighbours into one kernel so intermediate tensors are never written to memory.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Constant folding</h3><p class="sm">Anything that depends only on the weights is computed once at build time, not on every run.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Dead-code elimination</h3><p class="sm">Remove training-only parts such as dropout, and branches whose result is unused.</p></div>
+<div class="card card-b" style="padding:18px 26px; gap:6px"><h3>Memory planning</h3><p class="sm">Tensors whose lifetimes do not overlap share one buffer. This decides whether a model fits on a microcontroller at all.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 56 · k-kernel -->
+<section id="k-kernel" data-page="56" class="s" data-transition="fade">
+<h2>What a kernel is</h2>
+<p class="lede">A kernel is the inner loop that implements one operator for one kind of processor.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:16px">
+<p class="lbk">Matrix multiplication, where an LLM spends almost all its time</p>
+<p class="fxs" style="font-size:28px; padding:26px 30px">for i in rows(A):<br>&#160;&#160;for j in cols(B):<br>&#160;&#160;&#160;&#160;for k in cols(A):<br>&#160;&#160;&#160;&#160;&#160;&#160;<span class="ho">C[i][j] += A[i][k] * B[k][j]</span></p>
+<p class="t">Correct, and very slow. It pretends that every memory access costs the same and that the processor does one multiply at a time. Neither is true.</p>
+<p class="sm mu">Libraries such as XNNPACK, KleidiAI, oneDNN, cuDNN and CMSIS-NN are collections of these kernels, written per processor family.</p>
+</div>
+<div class="col f1" style="gap:14px">
+<p class="lbk">Four ideas make it tens of times faster. The next slides take them in turn</p>
+<div class="card ar-in" style="padding:18px 26px; gap:6px; --i:1"><h3>1 · Respect the cache</h3><p class="sm">Work on tiles small enough to stay in fast memory, and lay the data out so it is read in order.</p></div>
+<div class="card ar-in" style="padding:18px 26px; gap:6px; --i:2"><h3>2 · Use SIMD</h3><p class="sm">One instruction processes 4, 8 or 16 numbers at once.</p></div>
+<div class="card ar-in" style="padding:18px 26px; gap:6px; --i:3"><h3>3 · Use every core, carefully</h3><p class="sm">Split the work across threads, or hand it to a GPU or NPU.</p></div>
+<div class="card ar-in" style="padding:18px 26px; gap:6px; --i:4"><h3>4 · Pick a better algorithm</h3><p class="sm">Reorganize the arithmetic so there is less of it.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 57 · k-cache -->
+<section id="k-cache" data-page="57" class="s" data-transition="fade">
+<h2>Idea 1: respect the memory hierarchy</h2>
+<p class="lede">The closer data sits to the processor, the faster it arrives, and the less of it fits.</p>
+<div class="bd">
+<div class="col" style="width:800px; gap:12px">
+<p class="lbk">Time for one access, on a logarithmic scale</p>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:290px">L1 cache · tens of KB</p><div class="hbar gx" style="width:60px; --i:0"></div><p class="lbk mono">~1 ns</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:290px">L2 cache · about 1 MB</p><div class="hbar gx" style="width:160px; --i:1"></div><p class="lbk mono">a few ns</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:290px">L3 cache · several MB</p><div class="hbar gx" style="width:240px; --i:2"></div><p class="lbk mono">tens of ns</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:290px">Main memory · GBs</p><div class="hbar gx" style="width:320px; background:#E0672B; --i:3"></div><p class="lbk mono or">~100 ns</p></div>
+<p class="sm mu">Orders of magnitude; exact figures differ from chip to chip.</p>
+<p class="lbk" style="margin-top:14px">Blocking: finish one cache-sized tile, then move on</p>
+<svg width="672" height="192" viewBox="0 0 672 192" aria-label="A matrix divided into tiles. A highlight moves from tile to tile."><rect width="672" height="192" fill="#DCE8F5"/><rect x="192" y="0" width="96" height="96" fill="#E0672B"><animate attributeName="x" values="0;96;192;288;384;480;576" dur="7s" begin="0s" repeatCount="indefinite"/></rect><path d="M96 0V192M192 0V192M288 0V192M384 0V192M480 0V192M576 0V192M0 96H672" stroke="#FFFDF8" stroke-width="4" fill="none"/></svg>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:14px 26px; gap:6px"><h3>Why the naive loop is slow</h3><p class="sm">It walks down a column of B, touching a different part of memory at every step. On a large matrix most accesses go to main memory.</p></div>
+<div class="card card-b" style="padding:14px 26px; gap:6px"><h3>Blocking</h3><p class="sm">Cut the matrices into tiles that fit in cache and finish one tile before the next. Each value fetched is reused many times.</p></div>
+<div class="card card-b" style="padding:14px 26px; gap:6px"><h3>Packing</h3><p class="sm">Copy the tile into a small buffer in exactly the order the inner loop reads it. Sequential reads suit the hardware prefetcher.</p></div>
+<div class="card card-o" style="padding:14px 26px; gap:6px"><h3>What cannot be blocked away</h3><p class="sm">A multi-gigabyte LLM never fits in cache. Each token streams every weight from main memory: the bandwidth limit from Part 1.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 58 · k-simd -->
+<section id="k-simd" data-page="58" class="s" data-transition="fade">
+<h2>Idea 2: many numbers per instruction</h2>
+<p class="lede">SIMD: single instruction, multiple data. One instruction acts on a whole register of values.</p>
+<div class="bd">
+<div class="col" style="width:780px; gap:12px">
+<p class="lbk">Scalar: four additions, four instructions</p>
+<div class="row" style="gap:10px"><p class="n n-s f1 ap" style="--i:1">a₁ + b₁</p><p class="n n-s f1 ap" style="--i:4">a₂ + b₂</p><p class="n n-s f1 ap" style="--i:7">a₃ + b₃</p><p class="n n-s f1 ap" style="--i:10">a₄ + b₄</p></div>
+<p class="lbk or" style="margin-top:8px">SIMD: four additions, one instruction</p>
+<div class="row ap" style="gap:0; --i:13"><p class="n n-o n-s f1">a₁ + b₁</p><p class="n n-o n-s f1" style="border-left:none">a₂ + b₂</p><p class="n n-o n-s f1" style="border-left:none">a₃ + b₃</p><p class="n n-o n-s f1" style="border-left:none">a₄ + b₄</p></div>
+<p class="lbk" style="margin-top:22px">What fits in one 128-bit register</p>
+<div class="row ac" style="gap:16px"><div class="row f1" style="gap:4px"><p class="n n-bt n-s f1">float32</p><p class="n n-bt n-s f1">float32</p><p class="n n-bt n-s f1">float32</p><p class="n n-bt n-s f1">float32</p></div><p class="lbk" style="width:130px">4 values</p></div>
+<div class="row ac" style="gap:16px"><div class="row f1" style="gap:4px; height:58px"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div><p class="lbk bl" style="width:130px">16 × int8</p></div>
+<p class="sm">Quantizing to INT8 is therefore also a speed-up: four times as many values per instruction, and a quarter of the memory traffic.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:14px 26px; gap:6px"><h3>Register widths</h3><p class="sm">NEON, on every Arm phone: 128 bits. AVX2 and AVX-512 on x86: 256 and 512. Arm SVE is scalable, from 128 to 2048.</p></div>
+<div class="card card-b" style="padding:14px 26px; gap:6px"><h3>Dot-product instructions</h3><p class="sm">Arm’s SDOT multiplies 16 pairs of int8 values and adds them into four 32-bit sums, in one instruction. It is the heart of an integer matrix multiply. x86 has VNNI.</p></div>
+<div class="card" style="padding:14px 26px; gap:6px"><h3>Newer still</h3><p class="sm">I8MM adds int8 matrix-multiply instructions. SME2 adds whole-matrix registers, on recent Apple chips and the newest Arm cores.</p></div>
+<div class="card card-o" style="padding:14px 26px; gap:6px"><h3>One binary, many kernels</h3><p class="sm">A library ships several versions of each kernel, detects the processor’s features at start-up, and calls the best one it can.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 59 · k-backends -->
+<section id="k-backends" data-page="59" class="s" data-transition="fade">
+<h2>Idea 3: threads, GPUs and NPUs</h2>
+<p class="lede">More processors help only if the work actually lands on them. Below, one operator the NPU cannot run sends the data to the CPU and back.</p>
+<div class="bd col" style="gap:18px">
+<!-- N1 120,40,150  N2 290,40,150  N3 460,40,150  C 640,150,230  N4 900,40,150  N5 1070,40,150 ; box h 67 -->
+<div class="host" style="width:1664px; height:230px">
+<p class="ab lbk or" style="left:0; top:58px; width:100px">NPU</p>
+<p class="ab lbk bl" style="left:0; top:168px; width:100px">CPU</p>
+<p class="ab n n-o" style="left:120px; top:40px; width:150px">conv</p>
+<p class="ab n n-o" style="left:290px; top:40px; width:150px">conv</p>
+<p class="ab n n-o" style="left:460px; top:40px; width:150px">matmul</p>
+<p class="ab n n-b ap" style="left:640px; top:150px; width:230px; --i:3">unsupported</p>
+<p class="ab n n-o" style="left:900px; top:40px; width:150px">matmul</p>
+<p class="ab n n-o" style="left:1070px; top:40px; width:150px">softmax</p>
+<x-connector class="cn" x1="270" y1="73" x2="290" y2="73" head="none"></x-connector>
+<x-connector class="cn" x1="440" y1="73" x2="460" y2="73" head="none"></x-connector>
+<x-connector class="cn af" style="--i:3" x1="610" y1="73" x2="755" y2="150" route="hv"></x-connector>
+<x-connector class="cn af" style="--i:5" x1="870" y1="183" x2="975" y2="107" route="hv"></x-connector>
+<x-connector class="cn" x1="1050" y1="73" x2="1070" y2="73" head="none"></x-connector>
+<p class="ab lb af" style="left:770px; top:96px; width:120px; --i:3">copy out</p>
+<p class="ab lb af" style="left:990px; top:128px; width:140px; --i:5">copy back</p>
+<p class="ab sm" style="left:1260px; top:40px; width:404px">Each hop copies tensors and synchronizes two processors. A few hops can erase the whole gain.</p>
+</div>
+<div class="cards f1" style="gap:24px">
+<div class="card card-b" style="padding:20px 26px; gap:6px"><h3>CPU threads</h3><p class="sm">Phone CPUs mix fast and slow cores. Use only the fast ones: a thread on a slow core holds the others back. LLM decode is memory-bound and stops scaling after a few threads.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Mobile GPU</h3><p class="sm">Programmed through OpenCL, Vulkan or Metal, and at its best in FP16. Its kernels are compiled when the app starts, so runtimes cache them to keep start-up short.</p></div>
+<div class="card card-o" style="padding:20px 26px; gap:6px"><h3>NPU</h3><p class="sm">Usually wants a quantized model with fixed shapes, compiled ahead of time for that exact chip. Anything it cannot run falls back to the CPU.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 60 · k-algos -->
+<section id="k-algos" data-page="60" class="s" data-transition="fade">
+<h2>Idea 4: pick a better algorithm</h2>
+<p class="lede">One operator can be computed in several equivalent ways. Four that matter in practice.</p>
+<div class="bd">
+<div class="cards g2 f1" style="gap:24px">
+<div class="card ar-in" style="--i:0"><p class="tag">Convolution</p><h3>im2col + GEMM</h3><p class="sm">Unroll every k × k window of the input into a row. The convolution becomes one large matrix multiply and reuses the best-tuned kernel. The price is a big temporary copy; XNNPACK’s indirect convolution swaps it for a table of pointers.</p></div>
+<div class="card card-o ar-in" style="--i:1"><p class="tag tag-k">3 × 3 convolution</p><div class="row ac" style="gap:20px"><p class="num2 mono">36 → 16</p><h3>Winograd</h3></div><p class="sm">Computing a 2 × 2 patch of outputs takes 16 multiplications instead of 36, a 2.25× saving paid for with extra additions. It is less robust at low precision, so it suits float kernels best.</p></div>
+<div class="card card-b ar-in" style="--i:2"><p class="tag tag-b">Attention</p><h3>FlashAttention</h3><p class="sm">Attention normally writes an N × N matrix to memory. FlashAttention computes the same result in tiles that fit fast on-chip memory and never stores it. Memory grows linearly with sequence length; the output is exact.</p></div>
+<div class="card ar-in" style="--i:3"><p class="tag">Integer inference</p><h3>Fixed-point rescaling</h3><p class="sm">After an int8 multiply, the result must be rescaled by a real number M. Kernels do it with an integer multiply and a bit shift, M ≈ M₀ · 2⁻ⁿ, so the whole network runs without floating point.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 61 · k-compilers -->
+<section id="k-compilers" data-page="61" class="s" data-transition="fade">
+<h2>Compilers and auto-tuning</h2>
+<p class="lede">Hand-writing a kernel for every operator on every chip does not scale. A compiler can search for the fast version instead.</p>
+<div class="bd">
+<div class="col" style="width:760px; gap:18px">
+<div class="row ac" style="gap:14px">
+<p class="n" style="width:180px; flex:none">Algorithm</p>
+<x-connector class="ar" style="width:40px"></x-connector>
+<div class="col ac" style="gap:8px">
+<div style="display:grid; grid-template-columns:repeat(6, 28px); gap:8px">
+<div class="sq sq-g ap" style="--i:1"></div><div class="sq sq-g ap" style="--i:1"></div><div class="sq sq-g ap" style="--i:2"></div><div class="sq sq-g ap" style="--i:2"></div><div class="sq sq-g ap" style="--i:3"></div><div class="sq sq-g ap" style="--i:3"></div>
+<div class="sq sq-g ap" style="--i:4"></div><div class="sq sq-g ap" style="--i:4"></div><div class="sq sq-g ap" style="--i:5"></div><div class="sq sq-o ap" style="--i:12"></div><div class="sq sq-g ap" style="--i:6"></div><div class="sq sq-g ap" style="--i:6"></div>
+<div class="sq sq-g ap" style="--i:7"></div><div class="sq sq-g ap" style="--i:7"></div><div class="sq sq-g ap" style="--i:8"></div><div class="sq sq-g ap" style="--i:8"></div><div class="sq sq-g ap" style="--i:9"></div><div class="sq sq-g ap" style="--i:9"></div>
+</div>
+<p class="lb ctr">candidate schedules</p>
+</div>
+<x-connector class="ar" style="width:40px"></x-connector>
+<p class="n n-o" style="width:230px; flex:none">Fastest schedule</p>
+</div>
+<p class="fxs">algorithm:  C = A × B<br><span class="ho">schedule:   tile 64×64, vectorize, 4 threads</span></p>
+<p class="sm">The algorithm states the mathematics; the schedule states loop order, tiling, vectorization and threading. Changing the schedule changes only the speed. The split comes from Halide.</p>
+</div>
+<div class="col f1" style="gap:12px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Searching the schedules</h3><p class="sm">Thousands of schedules are valid for one operator. An auto-tuner tries them on the device, or asks a learned cost model, and keeps the fastest.</p></div>
+<div class="card card-b" style="padding:18px 26px; gap:6px"><h3>Apache TVM</h3><p class="sm">The best-known open compiler of this kind. Its current tuner is MetaSchedule; AutoTVM and Ansor were earlier generations. MLC-LLM is built on it.</p></div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>TensorRT</h3><p class="sm">Builds an “engine” for one NVIDIA GPU: fuses layers, chooses precision, times alternative kernels and keeps the fastest. By default it runs only on the GPU model and version that built it.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 62 · k-kvcache -->
+<section id="k-kvcache" data-page="62" class="s" data-transition="fade">
+<h2>The KV cache</h2>
+<p class="lede">The most important runtime optimization for LLMs: never recompute what earlier tokens already produced.</p>
+<div class="bd">
+<div class="col" style="width:800px; gap:14px">
+<div class="row" style="gap:40px">
+<div class="col f1" style="gap:8px">
+<svg width="336" height="252" viewBox="0 0 336 252" aria-label="A triangle of attention work with every row highlighted: without a cache, generating the sixth token redoes all earlier rows"><path d="M0 0h56v42h-56zM0 42h112v42h-112zM0 84h168v42h-168zM0 126h224v42h-224zM0 168h280v42h-280zM0 210h336v42h-336z" fill="#E0672B"/><path d="M56 0V252M112 42V252M168 84V252M224 126V252M280 168V252M0 42H112M0 84H168M0 126H224M0 168H280M0 210H336" stroke="#FFFDF8" stroke-width="3" fill="none"/></svg>
+<p class="lbk">Without a cache</p><p class="sm">Producing token 6 redoes the work of tokens 1 to 5.</p>
+</div>
+<div class="col f1" style="gap:8px">
+<svg width="336" height="252" viewBox="0 0 336 252" aria-label="The same triangle with only the last row highlighted: with a cache, only the new token's row is computed"><path d="M0 0h56v42h-56zM0 42h112v42h-112zM0 84h168v42h-168zM0 126h224v42h-224zM0 168h280v42h-280z" fill="#2F6FB7"/><path d="M0 210h336v42h-336z" fill="#E0672B"><animate attributeName="opacity" values="0;0;1" dur="1.8s" begin="0s"/></path><path d="M56 0V252M112 42V252M168 84V252M224 126V252M280 168V252M0 42H112M0 84H168M0 126H224M0 168H280M0 210H336" stroke="#FFFDF8" stroke-width="3" fill="none"/></svg>
+<p class="lbk or">With a cache</p><p class="sm">Blue rows are stored. Only the new row is computed.</p>
+</div>
+</div>
+<p class="fxs">KV bytes = 2 × layers × tokens × kv_heads × head_dim × bytes</p>
+<p class="sm">Worked example: a 7B model with 32 layers and 32 heads of 128 dimensions, in FP16, stores 0.5 MB per token. A 4,096-token context costs 2 GB, on top of the weights.</p>
+</div>
+<div class="col f1" style="gap:14px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>What is stored</h3><p class="sm">For every layer, the key and value vectors of every token so far. They never change once computed, because attention only looks backward.</p></div>
+<div class="card card-b" style="padding:18px 26px; gap:6px"><h3>The trade</h3><p class="sm">Work per new token drops from quadratic to linear in the context length. The price is memory that grows with every token.</p></div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>Keeping it small</h3><p class="sm">Grouped-query attention stores fewer KV heads. The cache itself can be quantized. And context length is a budget: set it on purpose.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 63 · k-runtime -->
+<section id="k-runtime" data-page="63" class="s" data-transition="fade">
+<h2>More runtime techniques for LLMs</h2>
+<p class="lede">None of these changes the model’s weights. They change when and how often it has to run.</p>
+<div class="bd col" style="gap:20px">
+<div class="card card-o" style="padding:22px 28px; gap:12px">
+<h3>Speculative decoding</h3>
+<div class="row ac" style="gap:12px"><p class="lb" style="width:430px; flex:none">A small draft model guesses ahead</p><p class="n n-s n-g ap" style="width:110px; --i:1">picks</p><p class="n n-s n-g ap" style="width:110px; --i:2">up</p><p class="n n-s n-g ap" style="width:110px; --i:3">the</p><p class="n n-s n-g ap" style="width:110px; --i:4">red</p><p class="n n-s n-g ap" style="width:110px; --i:5">cup</p></div>
+<div class="row ac" style="gap:12px"><p class="lb" style="width:430px; flex:none">The large model checks in one pass</p><p class="n n-s n-b ap" style="width:110px; --i:8">picks</p><p class="n n-s n-b ap" style="width:110px; --i:8">up</p><p class="n n-s n-b ap" style="width:110px; --i:8">the</p><p class="n n-s n-k ap" style="width:110px; --i:10">blue</p><p class="lb" style="width:760px; flex:none">three accepted, one corrected: four tokens for one large pass</p></div>
+<p class="sm">The output follows exactly the same distribution as the large model alone. Reported speed-ups are 2–3× (Leviathan et al., 2023). The cost is memory for a second model.</p>
+</div>
+<div class="cards f1" style="gap:24px">
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Prefix caching</h3><p class="sm">Keep the KV cache of a fixed system prompt, or of the unchanged start of a conversation, and reuse it. Only the new tokens are processed.</p></div>
+<div class="card" style="padding:20px 26px; gap:6px"><h3>Memory-mapped weights</h3><p class="sm">The model file is mapped into memory instead of copied. Pages load on first use, start-up is quick, and the OS can drop and reload them under pressure.</p></div>
+<div class="card card-b" style="padding:20px 26px; gap:6px"><h3>Warm-up and heat</h3><p class="sm">The first run pays for loading and kernel compilation. Sustained runs heat the chip until it throttles: phones have been measured losing 10–40% of their speed.</p></div>
+</div>
+</div>
+<p class="ft">Part 6 · Kernels and runtimes</p>
+</section>
+<!-- 64 · x-title -->
+<section id="x-title" data-page="64" class="dk" data-transition="fade">
+<div class="row f1" style="gap:96px">
+<div class="col f3 jc">
+<p class="secno ar-in">07</p>
+<h1 class="ar-in" style="--i:1">LLM, VLM and VLA on the edge</h1>
+<p class="tl ar-in" style="--i:2; color:#AEBBC6">Three model families, each containing the one before. The toolbox is the same; what changes is where the cost sits.</p>
+</div>
+<div class="col f2 jc">
+<p class="eb af" style="--i:3">This part answers</p>
+<p class="q af" style="--i:4">Where do an LLM’s memory and time go on a device?</p>
+<p class="q af" style="--i:5">What does a camera add to the bill?</p>
+<p class="q af" style="--i:6">Why is a robot policy the hardest case?</p>
+<p class="q af" style="--i:7">Which tool fits which device?</p>
+</div>
+</div>
+</section>
+<!-- 65 · x-llm -->
+<section id="x-llm" data-page="65" class="s" data-transition="fade">
+<h2>An LLM on a device: the budget</h2>
+<p class="lede">Start from the memory the device can spare and work backwards. An illustrative budget for a 3-billion-parameter model on an 8 GB phone:</p>
+<div class="bd col" style="gap:18px">
+<div class="row" style="gap:4px; height:76px">
+<div class="n n-o col jc gx" style="width:392px; padding:0; flex:none; --i:0"><p class="lbk">weights · 1.9 GB</p></div>
+<div class="n n-b col jc gx" style="width:103px; padding:0; flex:none; --i:2"><p class="lbk" style="color:#FFFDF8">0.5</p></div>
+<div class="n n-k col jc gx" style="width:62px; padding:0; flex:none; --i:3"><p class="lbk" style="color:#F6F4EE">0.3</p></div>
+<div class="n n-g col jc f1" style="padding:0"><p class="lbk mu">the rest of the phone: operating system and other apps</p></div>
+</div>
+<div class="row" style="gap:36px">
+<div class="lg"><div class="sq sq-o"></div><p>weights at about 4.8 bits each</p></div>
+<div class="lg"><div class="sq"></div><p>KV cache for a 4,096-token context</p></div>
+<div class="lg"><div class="sq sq-k"></div><p>activations and runtime</p></div>
+</div>
+<div class="cards g5 f1" style="margin-top:8px">
+<div class="card ar-in" style="padding:22px 22px; gap:8px; --i:1"><p class="num2 or">1</p><p class="k">Pick a small model</p><p class="sm">One designed for devices, 1–4B, already distilled.</p></div>
+<div class="card ar-in" style="padding:22px 22px; gap:8px; --i:2"><p class="num2 or">2</p><p class="k">Quantize the weights</p><p class="sm">About 4 bits, with a calibrated method.</p></div>
+<div class="card ar-in" style="padding:22px 22px; gap:8px; --i:3"><p class="num2 or">3</p><p class="k">Cap the context</p><p class="sm">The KV cache grows with every token. Set a limit.</p></div>
+<div class="card ar-in" style="padding:22px 22px; gap:8px; --i:4"><p class="num2 or">4</p><p class="k">Tune the runtime</p><p class="sm">Fast cores only; try the GPU for prefill.</p></div>
+<div class="card card-o ar-in" style="padding:22px 22px; gap:8px; --i:5"><p class="num2">5</p><p class="k">Measure, warm</p><p class="sm">Time to first token and tokens/s, after the device heats up.</p></div>
+</div>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 66 · x-vlm -->
+<section id="x-vlm" data-page="66" class="s" data-transition="fade">
+<h2>A VLM: an LLM with eyes</h2>
+<p class="lede">A vision encoder turns the image into tokens, a small projector maps them into the LLM’s space, and the LLM reads them like a very long prompt.</p>
+<div class="bd col" style="gap:20px">
+<!-- IMG 0,40,170  ENC 230,40,270  PRJ 560,40,190  VT 810,40,250  TXT 810,150,250  LLM 1120,40,300x177  OUT 1500,95,164 ; h 67 -->
+<div class="host" style="width:1664px; height:230px">
+<p class="ab n" style="left:0; top:40px; width:170px">Image</p>
+<p class="ab n n-o ap" style="left:230px; top:40px; width:270px; --i:1">Vision encoder</p>
+<p class="ab n ap" style="left:560px; top:40px; width:190px; --i:2">Projector</p>
+<p class="ab n n-ot ap" style="left:810px; top:40px; width:250px; --i:3">visual tokens</p>
+<p class="ab n n-bt" style="left:810px; top:150px; width:250px">text tokens</p>
+<div class="ab n n-b col jc ap" style="left:1120px; top:40px; width:300px; height:177px; --i:4"><p class="tl k" style="color:#FFFDF8">LLM</p></div>
+<p class="ab n" style="left:1500px; top:95px; width:164px">Answer</p>
+<x-connector class="cn" x1="170" y1="73" x2="230" y2="73"></x-connector>
+<x-connector class="cn" x1="500" y1="73" x2="560" y2="73"></x-connector>
+<x-connector class="cn" x1="750" y1="73" x2="810" y2="73"></x-connector>
+<x-connector class="cn" x1="1060" y1="73" x2="1120" y2="73"></x-connector>
+<x-connector class="cn" x1="1060" y1="183" x2="1120" y2="183"></x-connector>
+<x-connector class="cn" x1="1420" y1="128" x2="1500" y2="128"></x-connector>
+<p class="ab lb" style="left:230px; top:120px; width:300px">a ViT, a few hundred million weights</p>
+<p class="ab lb" style="left:560px; top:120px; width:230px">a small MLP</p>
+</div>
+<div class="cards f1" style="gap:24px">
+<div class="card card-o" style="padding:22px 26px; gap:6px"><h3>Cost 1: the encoder</h3><p class="sm">It runs once per image, before any text can be generated. Its work grows with the square of the resolution. If the image does not change between turns, cache its tokens.</p></div>
+<div class="card" style="padding:22px 26px; gap:6px"><h3>Cost 2: the visual tokens</h3><p class="sm">Hundreds of them enter the prompt, so prefill and time to first token suffer most. Fewer tokens is the largest single lever: lower resolution, pooling, or token pruning.</p></div>
+<div class="card card-b" style="padding:22px 26px; gap:6px"><h3>Precision is not uniform</h3><p class="sm">The LLM tolerates 4 bits. The vision encoder and projector are small and more sensitive, so they are usually kept at 8 or 16 bits.</p></div>
+</div>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 67 · x-vla -->
+<section id="x-vla" data-page="67" class="s" data-transition="fade">
+<h2>A VLA: a VLM that outputs actions</h2>
+<p class="lede">A VLA adds an action head to a VLM and runs inside a control loop, many times a second.</p>
+<div class="bd col" style="gap:18px">
+<!-- OBS 0,0,330,98  VLM 390,0,330,98  ACT 780,0,310,98  CH 1150,0,280,98  ROB 1490,0,174,98 ; loop back via y=150 -->
+<div class="host" style="width:1664px; height:200px">
+<p class="ab n" style="left:0; top:0; width:330px">Camera images, instruction, robot state</p>
+<p class="ab n n-b ap" style="left:390px; top:0; width:330px; --i:1">VLM backbone<br>reads the scene</p>
+<p class="ab n n-o ap" style="left:780px; top:0; width:310px; --i:2">Action head<br>outputs motion</p>
+<p class="ab n n-ot ap" style="left:1150px; top:0; width:280px; --i:3">Action chunk<br>the next H actions</p>
+<p class="ab n n-k ap" style="left:1490px; top:0; width:174px; --i:4">Robot<br>executes</p>
+<x-connector class="cn" x1="330" y1="49" x2="390" y2="49"></x-connector>
+<x-connector class="cn" x1="720" y1="49" x2="780" y2="49"></x-connector>
+<x-connector class="cn" x1="1090" y1="49" x2="1150" y2="49"></x-connector>
+<x-connector class="cn" x1="1430" y1="49" x2="1490" y2="49"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="1577" y1="98" x2="1577" y2="150" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="1577" y1="150" x2="165" y2="150" head="none"></x-connector>
+<x-connector class="cn-o af" style="--i:6" x1="165" y1="150" x2="165" y2="98"></x-connector>
+<p class="ab lbk or af" style="left:560px; top:162px; width:700px; --i:6">new observation: the loop must close 10–50 times a second</p>
+</div>
+<table>
+<tr class="thd"><th style="width:15%">Model</th><th style="width:11%">Size</th><th style="width:38%">How actions are produced</th><th>Reported speed</th></tr>
+<tr><td>RT-2, 2023</td><td>up to 55B</td><td>Actions written as tokens, one by one</td><td>1–3 Hz, served from the cloud</td></tr>
+<tr><td>OpenVLA, 2024</td><td>7B</td><td>Action tokens, 256 bins per dimension</td><td>About 6 Hz on an RTX 4090</td></tr>
+<tr><td>π0, 2024</td><td>3.3B</td><td>Flow-matching expert, 50-action chunks</td><td>73 ms per chunk on an RTX 4090</td></tr>
+<tr><td>SmolVLA, 2025</td><td>0.45B</td><td>Flow-matching expert, asynchronous</td><td>Designed for consumer hardware</td></tr>
+<tr><td>GR00T N1, 2025</td><td>two-part</td><td>Slow VLM plus a fast action module</td><td>VLM at 10 Hz, actions at 120 Hz</td></tr>
+</table>
+<p class="sm mu">Either emit actions as tokens (simple, slow), or attach a small flow network that outputs a whole chunk in a few steps.</p>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 68 · x-vla-levers -->
+<section id="x-vla-levers" data-page="68" class="s" data-transition="fade">
+<h2>Making a VLA fast enough</h2>
+<p class="lede">Every lever below is a technique from an earlier part, applied to the control loop.</p>
+<div class="bd col" style="gap:20px">
+<div class="cards f1" style="gap:20px">
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:0"><h3>Action chunking</h3><p class="sm">Predict the next H actions in one inference and execute them while the next inference runs. One 73 ms pass of π0 yields 50 actions.</p></div>
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:1"><h3>Fewer denoising steps</h3><p class="sm">Each step is one pass of the action head. Step distillation from Part 3 cuts 10 steps towards 1–4.</p></div>
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:2"><h3>Run the VLM once</h3><p class="sm">The backbone processes the observation a single time. Its KV cache is reused by every denoising step: in π0, 32 ms once, then 27 ms for all ten steps.</p></div>
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:3"><h3>Fewer tokens, fewer layers</h3><p class="sm">SmolVLA feeds 64 visual tokens per frame and uses only the first half of its VLM’s layers. Token and layer pruning from Part 4.</p></div>
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:4"><h3>Parallel decoding</h3><p class="sm">Emit all action dimensions of a chunk in one pass instead of token by token. OpenVLA-OFT reports 26× faster action generation.</p></div>
+<div class="card ar-in" style="padding:20px 26px; gap:6px; --i:5"><h3>Asynchronous execution</h3><p class="sm">Decouple acting from thinking: the robot keeps executing the current chunk while the next one is computed.</p></div>
+</div>
+<div class="card card-o" style="flex-direction:row; align-items:center; gap:36px; padding:20px 28px">
+<div class="col" style="gap:2px; flex:none"><p class="num2 mono">16.8 → 7.0 GB</p><p class="sm">memory, bfloat16 to 4-bit</p></div>
+<div class="col" style="gap:2px; flex:none"><p class="num2 mono">71.3 → 71.9%</p><p class="sm">task success</p></div>
+<p class="sm f1">OpenVLA, quantized. The 8-bit version scored only 58.1%: its kernels were slower, the loop fell to 1.2 Hz, and the robot failed. For a robot, latency is part of accuracy.</p>
+</div>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 69 · x-combine -->
+<section id="x-combine" data-page="69" class="s" data-transition="fade">
+<h2>Combining the techniques</h2>
+<p class="lede">The techniques multiply, but only in the right order. Each step assumes the ones before it are finished.</p>
+<div class="bd col" style="gap:22px">
+<div class="row ac" style="gap:10px">
+<p class="n f1 as" style="--i:0">1 · Choose a small architecture</p><x-connector class="ar" style="width:36px"></x-connector>
+<p class="n n-bt f1 as" style="--i:2">2 · Distill from a large teacher</p><x-connector class="ar" style="width:36px"></x-connector>
+<p class="n n-bt f1 as" style="--i:4">3 · Prune layers, heads, tokens</p><x-connector class="ar" style="width:36px"></x-connector>
+<p class="n n-ot f1 as" style="--i:6">4 · Quantize</p><x-connector class="ar" style="width:36px"></x-connector>
+<p class="n n-o f1 as" style="--i:8">5 · Compile for the device</p>
+</div>
+<div class="row f1" style="gap:48px">
+<div class="col" style="width:820px; gap:12px">
+<p class="lbk">The classic demonstration: AlexNet through Deep Compression</p>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:210px">original</p><div class="hbar bar-k gx" style="width:480px; --i:1"></div><p class="lbk mono">240 MB</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:210px">+ pruning</p><div class="hbar gx" style="width:54px; --i:3"></div><p class="lbk mono">9× smaller</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:210px">+ quantization</p><div class="hbar gx" style="width:18px; --i:5"></div><p class="lbk mono">27× smaller</p></div>
+<div class="row ac" style="gap:16px"><p class="lb" style="width:210px">+ entropy coding</p><div class="hbar gx" style="width:14px; background:#E0672B; --i:7"></div><p class="lbk mono or">35× smaller: 6.9 MB</p></div>
+<p class="sm mu">Han et al., 2016. No loss of accuracy at any stage.</p>
+</div>
+<div class="col f1" style="gap:14px">
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Why quantization comes late</h3><p class="sm">Anything that retrains the weights afterwards, such as distillation or fine-tuning after pruning, would undo the rounding.</p></div>
+<div class="card" style="padding:18px 26px; gap:6px"><h3>Why compiling comes last</h3><p class="sm">Kernels are chosen for the final shapes and data types. Change the model and the compiled artefact is stale.</p></div>
+<div class="card card-o" style="padding:18px 26px; gap:6px"><h3>Measure after every step</h3><p class="sm">Errors compound. Knowing which step cost the quality is only possible if you checked after each one.</p></div>
+</div>
+</div>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 70 · x-tools -->
+<section id="x-tools" data-page="70" class="s" data-transition="fade">
+<h2>The toolchain map</h2>
+<p class="lede">The runtimes you will meet most often, what each is for, and where it runs.</p>
+<div class="bd col" style="gap:16px">
+<table>
+<tr class="thd"><th style="width:17%">Runtime</th><th style="width:12%">Format</th><th style="width:36%">Reach for it when</th><th>Runs on</th></tr>
+<tr><td>llama.cpp</td><td>GGUF</td><td>Running an LLM or VLM at 2–8 bits</td><td>CPU, Metal, CUDA, Vulkan, OpenCL</td></tr>
+<tr><td>ExecuTorch</td><td>.pte</td><td>Shipping a PyTorch model in an app</td><td>CPU, Core ML, Qualcomm, MediaTek NPUs</td></tr>
+<tr><td>LiteRT</td><td>.tflite</td><td>INT8 vision and audio models</td><td>CPU, mobile GPUs, NPUs, MCUs</td></tr>
+<tr><td>ONNX Runtime</td><td>.onnx</td><td>One model across many platforms</td><td>CPU, CUDA, TensorRT, Qualcomm NPUs</td></tr>
+<tr><td>TensorRT</td><td>engine</td><td>Maximum speed on NVIDIA hardware</td><td>NVIDIA GPUs, including Jetson</td></tr>
+<tr><td>MLC-LLM</td><td>compiled</td><td>LLMs on phone GPUs or in a browser</td><td>Vulkan, Metal, OpenCL, WebGPU</td></tr>
+<tr><td>Core ML, MLX</td><td>.mlpackage</td><td>Apple devices only</td><td>Apple CPU, GPU, Neural Engine</td></tr>
+<tr><td>CMSIS-NN</td><td>C code</td><td>INT8 kernels for microcontrollers</td><td>Arm Cortex-M</td></tr>
+</table>
+<p class="sm mu">LiteRT is the current name of TensorFlow Lite. Most of these can hand parts of a graph to another back end: ExecuTorch and LiteRT both use XNNPACK for CPU kernels, and ONNX Runtime can call TensorRT.</p>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 71 · x-guide -->
+<section id="x-guide" data-page="71" class="s" data-transition="fade">
+<h2>A decision guide by device</h2>
+<p class="lede">Start in the column for your hardware. The rows are the choices this course has covered.</p>
+<div class="bd col" style="gap:0">
+<div class="cards g4 f1">
+<div class="card ar-in" style="padding:24px 24px; gap:8px; --i:0"><p class="tag">Microcontroller</p><p class="sm mu">Model</p><p class="sm k">Tiny CNN, under 1 MB</p><p class="sm mu">Shrink it with</p><p class="sm k">Searched architecture, QAT to INT8, channel pruning</p><p class="sm mu">Run it with</p><p class="sm k">LiteRT for Microcontrollers, CMSIS-NN</p><p class="sm mu">Watch</p><p class="sm k">Peak RAM, not only flash</p></div>
+<div class="card ar-in" style="padding:24px 24px; gap:8px; --i:1"><p class="tag tag-b">Phone, laptop</p><p class="sm mu">Model</p><p class="sm k">1–4B LLM or VLM</p><p class="sm mu">Shrink it with</p><p class="sm k">A distilled small model, 4-bit weights, few visual tokens</p><p class="sm mu">Run it with</p><p class="sm k">llama.cpp, ExecuTorch, MLC-LLM, Core ML</p><p class="sm mu">Watch</p><p class="sm k">Heat, battery, memory shared with other apps</p></div>
+<div class="card card-o ar-in" style="padding:24px 24px; gap:8px; --i:2"><p class="tag tag-k">Embedded GPU, robot</p><p class="sm mu">Model</p><p class="sm k">LLM, VLM or VLA up to about 7B</p><p class="sm mu">Shrink it with</p><p class="sm k">FP16 or 4-bit, action chunking, fewer denoising steps and tokens</p><p class="sm mu">Run it with</p><p class="sm k">TensorRT, llama.cpp, ONNX Runtime</p><p class="sm mu">Watch</p><p class="sm k">Control rate and worst-case latency</p></div>
+<div class="card ar-in" style="padding:24px 24px; gap:8px; --i:3"><p class="tag">Workstation GPU</p><p class="sm mu">Model</p><p class="sm k">7–30B models</p><p class="sm mu">Shrink it with</p><p class="sm k">FP16, or 4–8 bit when memory is short</p><p class="sm mu">Run it with</p><p class="sm k">TensorRT, llama.cpp, a GPU serving stack</p><p class="sm mu">Watch</p><p class="sm k">GPU memory and power draw</p></div>
+</div>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 72 · x-measure -->
+<section id="x-measure" data-page="72" class="s" data-transition="fade">
+<h2>How to measure</h2>
+<p class="lede">An optimization only counts once it is measured, on the device, in conditions that resemble real use.</p>
+<div class="bd col" style="gap:0">
+<div class="cards f1" style="gap:20px">
+<div class="card ar-in" style="--i:0"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Wrench"></x-icon></div><h3>On the target</h3></div><p class="sm">A laptop number says little about a phone. Build for the real device and time it there, with the real runtime and the real thread settings.</p></div>
+<div class="card ar-in" style="--i:1"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Clock"></x-icon></div><h3>Warm, then sustained</h3></div><p class="sm">Discard the first runs: they include loading and compilation. Then run long enough for the chip to heat up and report the steady state.</p></div>
+<div class="card ar-in" style="--i:2"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Chart"></x-icon></div><h3>Distributions</h3></div><p class="sm">Report the median and a high percentile, not the best run. A robot is limited by its slowest inference, not its average one.</p></div>
+<div class="card ar-in" style="--i:3"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Activity"></x-icon></div><h3>The right clock</h3></div><p class="sm">For an LLM, separate time to first token from tokens per second. For a VLA, measure the full loop from camera frame to motor command.</p></div>
+<div class="card ar-in" style="--i:4"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="Database"></x-icon></div><h3>Memory and energy</h3></div><p class="sm">Record peak memory, not average. Where battery matters, measure joules per inference with a power meter or the system’s counters.</p></div>
+<div class="card card-o ar-in" style="--i:5"><div class="row ac" style="gap:16px"><div class="chip"><x-icon name="CheckCircle"></x-icon></div><h3>Task quality</h3></div><p class="sm">Perplexity can stay flat while answers get worse. Evaluate on the task itself: answer accuracy for an LLM, success rate for a robot.</p></div>
+</div>
+<p class="take" style="margin-top:20px">Change one thing at a time, and keep the unoptimized model as the reference for every comparison.</p>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 73 · x-pitfalls -->
+<section id="x-pitfalls" data-page="73" class="s" data-transition="fade">
+<h2>Common pitfalls</h2>
+<p class="lede">Six assumptions that sound reasonable and are regularly wrong.</p>
+<div class="bd col" style="gap:20px">
+<table>
+<tr class="thd"><th style="width:36%">The assumption</th><th>What actually happens</th></tr>
+<tr><td>Fewer parameters means faster</td><td>Parameters and FLOPs are proxies; memory traffic and kernels decide</td></tr>
+<tr><td>50% sparse means twice as fast</td><td>Only with structured sparsity or dedicated sparse kernels</td></tr>
+<tr><td>8-bit is safer than 4-bit</td><td>Depends on the kernels: OpenVLA at 8-bit was slower and failed more</td></tr>
+<tr><td>The NPU speeds everything up</td><td>One unsupported operator brings CPU fallbacks and copies</td></tr>
+<tr><td>One benchmark run is enough</td><td>The first run is slow, and a hot device is slower than a cool one</td></tr>
+<tr><td>Average quality held, so all is well</td><td>Small average changes can hide large failures on rare inputs</td></tr>
+</table>
+<div class="sp"></div>
+<p class="take" style="margin-top:0">Every one of these is caught by the same habit: measure the real task on the real device.</p>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 74 · x-reading -->
+<section id="x-reading" data-page="74" class="s" data-transition="fade">
+<h2>Where to go next</h2>
+<p class="lede">The papers behind each part, in reading order. Nearly all are free to read on arXiv.</p>
+<div class="bd col" style="gap:0">
+<div class="cards f1" style="gap:16px">
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-o">Quantization</p><p class="sm">Jacob et al., 2018 · integer-only inference</p><p class="sm">Frantar et al., 2023 · GPTQ</p><p class="sm">Xiao et al., 2023 · SmoothQuant</p><p class="sm">Lin et al., 2024 · AWQ</p><p class="sm">Ma et al., 2024 · BitNet b1.58</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-o">Distillation</p><p class="sm">Hinton et al., 2015 · the original</p><p class="sm">Sanh et al., 2019 · DistilBERT</p><p class="sm">Salimans and Ho, 2022 · progressive distillation</p><p class="sm">Song et al., 2023 · consistency models</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-o">Pruning</p><p class="sm">Han et al., 2016 · Deep Compression</p><p class="sm">Frankle and Carbin, 2019 · lottery tickets</p><p class="sm">Frantar and Alistarh, 2023 · SparseGPT</p><p class="sm">Sun et al., 2024 · Wanda</p><p class="sm">Chen et al., 2024 · FastV</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-b">Architectures</p><p class="sm">Howard et al., 2017 · MobileNets</p><p class="sm">Tan et al., 2019 · MnasNet</p><p class="sm">Liu et al., 2019 · DARTS</p><p class="sm">Cai et al., 2020 · Once-for-All</p><p class="sm">Liu et al., 2024 · MobileLLM</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-b">Kernels and compilers</p><p class="sm">Goto and van de Geijn, 2008 · fast matrix multiply</p><p class="sm">Chen et al., 2018 · TVM</p><p class="sm">Dao et al., 2022 · FlashAttention</p><p class="sm">Leviathan et al., 2023 · speculative decoding</p></div>
+<div class="card" style="padding:14px 26px; gap:4px"><p class="tag tag-b">Robot models</p><p class="sm">Brohan et al., 2023 · RT-2</p><p class="sm">Kim et al., 2024 · OpenVLA</p><p class="sm">Black et al., 2024 · π0</p><p class="sm">Shukor et al., 2025 · SmolVLA</p></div>
+</div>
+<p class="take" style="margin-top:20px">For a full lecture course on the same ground: MIT 6.5940, “TinyML and Efficient Deep Learning Computing”.</p>
+</div>
+<p class="ft">Part 7 · LLM, VLM, VLA</p>
+</section>
+<!-- 75 · end -->
+<section id="end" data-page="75" class="acc" data-transition="fade">
+<p class="eb af" style="color:#0E1A24">The course in three lines</p>
+<div class="sp"></div>
+<h1 class="ar-in" style="--i:1">Make it fit.</h1>
+<h1 class="ar-in" style="--i:3">Make it fast.</h1>
+<h1 class="ar-in" style="--i:5">Prove it still works.</h1>
+<div class="sp"></div>
+<div class="row" style="gap:48px">
+<p class="t f1 af" style="--i:2"><b>Fit:</b> a small architecture, distillation, pruning, and above all quantization.</p>
+<p class="t f1 af" style="--i:4"><b>Fast:</b> fewer tokens and steps, a KV cache, and kernels built for the chip.</p>
+<p class="t f1 af" style="--i:6"><b>Prove:</b> task quality and latency, measured on the device.</p>
+</div>
+</section>
+    </div>
+  </main>
+
+  <nav class="toolbar" aria-label="Slide controls">
+    <button id="prev" type="button" aria-label="Previous slide" title="Previous (←)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></button>
+    <span class="toolbar__count" id="count" aria-live="polite">1 / 75</span>
+    <button id="next" type="button" aria-label="Next slide" title="Next (→)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19"/></svg></button>
+    <span class="toolbar__sep" aria-hidden="true"></span>
+    <select id="part" aria-label="Jump to part" title="Jump to part">
+        <option value="1">Introduction</option>
+        <option value="3">Part 1 · Background</option>
+        <option value="12">Part 2 · Quantization</option>
+        <option value="28">Part 3 · Distillation</option>
+        <option value="36">Part 4 · Pruning</option>
+        <option value="45">Part 5 · Architectures</option>
+        <option value="53">Part 6 · Kernels and runtimes</option>
+        <option value="64">Part 7 · LLM, VLM, VLA</option>
+    </select>
+    <button id="replay" type="button" aria-label="Replay this slide's animations" title="Replay animations (R)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 a8 8 0 1 0 3 -6.2 M4 4 V8.5 H8.5"/></svg></button>
+    <button id="full" type="button" aria-label="Toggle full screen" title="Full screen (F)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9 V4 H9 M15 4 H20 V9 M20 15 V20 H15 M9 20 H4 V15"/></svg></button>
+    <span class="toolbar__sep" aria-hidden="true"></span>
+    <a class="toolbar__home" href="https://khanhnd61-vr.github.io/">Home ↗</a>
+  </nav>
+
+  <script src="assets/viewer.js"></script>
+</body>
+</html>
